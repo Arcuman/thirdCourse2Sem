@@ -1,7 +1,7 @@
-config ={
-    username: 'Vad',
-    password: 'Vad',
-    database: 'GVA',
+config = {
+    username: 'Arcuman',
+    password: 'QWEaz45@',
+    database: 'BAA',
     host: 'localhost',
     dialect: 'mssql',
     logging: false,

@@ -7,13 +7,15 @@ let db = require('./db').ORM(sequelize);
 let fs = require('fs');
 
 sequelize.authenticate()
-    .then( )
     .then(() => {
         return sequelize.transaction({isolationLevel: Sequelize.Transaction.ISOLATION_LEVELS.READ_UNCOMMITTED})
             .then(t => {
-                return db.Pulpit.create({pulpit:'CC', pulpit_name:'qe', faculty: 'ЛХФ       '}, {transaction:t})
+                return db.Pulpit.create({pulpit: 'CC', pulpit_name: 'qe', faculty: 'ЛХФ       '}, {transaction: t})
                     .then((r) => {
-                         setTimeout(() => {console.log('rollback', r); return t.rollback();}, 10000);
+                        setTimeout(() => {
+                            console.log('rollback', r);
+                            return t.rollback();
+                        }, 10000);
                     })
             })
     });
@@ -21,7 +23,7 @@ sequelize.authenticate()
 let GET_handler = (req, res) => {
     let path_mas = url.parse(req.url).pathname.split('/');
     res.writeHead(200, {'Content-Type': 'application/json; charset=utf-8'});
-    if(path_mas[1] === "api"){
+    if (path_mas[1] === "api") {
         switch (path_mas[2]) {
             case 'faculties':
                 sequelize.authenticate().then(() => {
@@ -51,14 +53,17 @@ let GET_handler = (req, res) => {
             case 'auditoriumsgt60':
                 sequelize.authenticate().then(async () => {
                     let audts = await db.Auditorium.scope('auditoriumsHigher60').findAll()
-                        .then(count => res.end(JSON.stringify({"rows deleted": count})))
-                        .catch((err) => {console.log(err); Error400(res, err.toString())})
+                        .then(count => res.end(JSON.stringify({"rows": count})))
+                        .catch((err) => {
+                            console.log(err);
+                            Error400(res, err.toString())
+                        })
                 });
                 break;
             default:
                 break;
         }
-    }else if(url.parse(req.url).pathname == "/"){
+    } else if (url.parse(req.url).pathname === "/") {
         res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'});
         let page = fs.readFileSync('./index.html');
         res.end(page)
@@ -69,18 +74,21 @@ let POST_handler = (req, res) => {
     let data_json = '';
     let path_mas = url.parse(req.url).pathname.split('/');
     res.writeHead(200, {'Content-Type': 'application/json; charset=utf-8'});
-    if(path_mas[1] === "api"){
+    if (path_mas[1] === "api") {
         switch (path_mas[2]) {
             case 'faculties':
                 req.on('data', chunk => {
                     data_json += chunk;
                 });
-                    req.on('end', () => {
-                        data_json = JSON.parse(data_json);
+                req.on('end', () => {
+                    data_json = JSON.parse(data_json);
                     sequelize.authenticate().then(() => {
                         db.Faculty.create({faculty: data_json.faculty, faculty_name: data_json.faculty_name})
                             .then(faculty => res.end(JSON.stringify(faculty)))
-                            .catch((err) => {console.log(err); Error400(res, err.toString())})
+                            .catch((err) => {
+                                console.log(err);
+                                Error400(res, err.toString())
+                            })
                     });
                 });
                 break;
@@ -91,9 +99,16 @@ let POST_handler = (req, res) => {
                 req.on('end', () => {
                     data_json = JSON.parse(data_json);
                     sequelize.authenticate().then(() => {
-                        db.Pulpit.create({pulpit: data_json.pulpit, pulpit_name: data_json.pulpit_name, faculty: data_json.faculty})
+                        db.Pulpit.create({
+                            pulpit: data_json.pulpit,
+                            pulpit_name: data_json.pulpit_name,
+                            faculty: data_json.faculty
+                        })
                             .then(pulpit => res.end(JSON.stringify(pulpit)))
-                            .catch((err) => {console.log(err); Error400(res, err.toString())})
+                            .catch((err) => {
+                                console.log(err);
+                                Error400(res, err.toString())
+                            })
                     });
                 });
                 break;
@@ -104,9 +119,16 @@ let POST_handler = (req, res) => {
                 req.on('end', () => {
                     data_json = JSON.parse(data_json);
                     sequelize.authenticate().then(() => {
-                        db.Subject.create({subject: data_json.subject, subject_name: data_json.subject_name, pulpit: data_json.pulpit})
+                        db.Subject.create({
+                            subject: data_json.subject,
+                            subject_name: data_json.subject_name,
+                            pulpit: data_json.pulpit
+                        })
                             .then(subject => res.end(JSON.stringify(subject)))
-                            .catch((err) => {console.log(err); Error400(res, err.toString())})
+                            .catch((err) => {
+                                console.log(err);
+                                Error400(res, err.toString())
+                            })
                     });
                 });
                 break;
@@ -117,9 +139,15 @@ let POST_handler = (req, res) => {
                 req.on('end', () => {
                     data_json = JSON.parse(data_json);
                     sequelize.authenticate().then(() => {
-                        db.Auditorium_type.create({auditorium_type: data_json.auditorium_type, auditorium_typename: data_json.auditorium_typename})
+                        db.Auditorium_type.create({
+                            auditorium_type: data_json.auditorium_type,
+                            auditorium_typename: data_json.auditorium_typename
+                        })
                             .then(subject => res.end(JSON.stringify(subject)))
-                            .catch((err) => {console.log(err); Error400(res, err.toString())})
+                            .catch((err) => {
+                                console.log(err);
+                                Error400(res, err.toString())
+                            })
                     });
                 });
                 break;
@@ -130,9 +158,17 @@ let POST_handler = (req, res) => {
                 req.on('end', () => {
                     data_json = JSON.parse(data_json);
                     sequelize.authenticate().then(() => {
-                        db.Auditorium.create({auditorium: data_json.auditorium, auditorium_name: data_json.auditorium_name, auditorium_capacity: data_json.auditorium_capacity, auditorium_type: data_json.auditorium_type})
+                        db.Auditorium.create({
+                            auditorium: data_json.auditorium,
+                            auditorium_name: data_json.auditorium_name,
+                            auditorium_capacity: data_json.auditorium_capacity,
+                            auditorium_type: data_json.auditorium_type
+                        })
                             .then(subject => res.end(JSON.stringify(subject)))
-                            .catch((err) => {console.log(err); Error400(res, err.toString())})
+                            .catch((err) => {
+                                console.log(err);
+                                Error400(res, err.toString())
+                            })
                     });
                 });
                 break;
@@ -146,7 +182,7 @@ let PUT_handler = (req, res) => {
     let data_json = '';
     let path_mas = url.parse(req.url).pathname.split('/');
     res.writeHead(200, {'Content-Type': 'application/json; charset=utf-8'});
-    if(path_mas[1] === "api"){
+    if (path_mas[1] === "api") {
         switch (path_mas[2]) {
             case 'faculties':
                 req.on('data', chunk => {
@@ -155,9 +191,12 @@ let PUT_handler = (req, res) => {
                 req.on('end', () => {
                     data_json = JSON.parse(data_json);
                     sequelize.authenticate().then(() => {
-                        db.Faculty.update({ faculty_name: data_json.faculty_name}, {where:{faculty: data_json.faculty}})
+                        db.Faculty.update({faculty_name: data_json.faculty_name}, {where: {faculty: data_json.faculty}})
                             .then(count => res.end(JSON.stringify({updated_rows: count[0]})))
-                            .catch((err) => {console.log(err); Error400(res, err.toString())})
+                            .catch((err) => {
+                                console.log(err);
+                                Error400(res, err.toString())
+                            })
                     });
                 });
                 break;
@@ -168,9 +207,15 @@ let PUT_handler = (req, res) => {
                 req.on('end', () => {
                     data_json = JSON.parse(data_json);
                     sequelize.authenticate().then(() => {
-                        db.Pulpit.update({pulpit_name: data_json.pulpit_name, faculty: data_json.faculty}, {where:{pulpit: data_json.pulpit}})
+                        db.Pulpit.update({
+                            pulpit_name: data_json.pulpit_name,
+                            faculty: data_json.faculty
+                        }, {where: {pulpit: data_json.pulpit}})
                             .then(count => res.end(JSON.stringify({updated_rows: count[0]})))
-                            .catch((err) => {console.log(err); Error400(res, err.toString())})
+                            .catch((err) => {
+                                console.log(err);
+                                Error400(res, err.toString())
+                            })
                     });
                 });
                 break;
@@ -181,9 +226,15 @@ let PUT_handler = (req, res) => {
                 req.on('end', () => {
                     data_json = JSON.parse(data_json);
                     sequelize.authenticate().then(() => {
-                        db.Subject.update({subject_name: data_json.subject_name, pulpit: data_json.pulpit}, {where:{subject: data_json.subject}})
+                        db.Subject.update({
+                            subject_name: data_json.subject_name,
+                            pulpit: data_json.pulpit
+                        }, {where: {subject: data_json.subject}})
                             .then(count => res.end(JSON.stringify({updated_rows: count[0]})))
-                            .catch((err) => {console.log(err); Error400(res, err.toString())})
+                            .catch((err) => {
+                                console.log(err);
+                                Error400(res, err.toString())
+                            })
                     });
                 });
                 break;
@@ -194,9 +245,12 @@ let PUT_handler = (req, res) => {
                 req.on('end', () => {
                     data_json = JSON.parse(data_json);
                     sequelize.authenticate().then(() => {
-                        db.Auditorium_type.update({auditorium_typename: data_json.auditorium_typename}, {where:{auditorium_type: data_json.auditorium_type}})
+                        db.Auditorium_type.update({auditorium_typename: data_json.auditorium_typename}, {where: {auditorium_type: data_json.auditorium_type}})
                             .then(count => res.end(JSON.stringify({updated_rows: count[0]})))
-                            .catch((err) => {console.log(err); Error400(res, err.toString())})
+                            .catch((err) => {
+                                console.log(err);
+                                Error400(res, err.toString())
+                            })
                     });
                 });
                 break;
@@ -207,9 +261,16 @@ let PUT_handler = (req, res) => {
                 req.on('end', () => {
                     data_json = JSON.parse(data_json);
                     sequelize.authenticate().then(() => {
-                        db.Auditorium.update({auditorium_name: data_json.auditorium_name, auditorium_capacity: data_json.auditorium_capacity, auditorium_type: data_json.auditorium_type}, {where:{auditorium: data_json.auditorium}})
+                        db.Auditorium.update({
+                            auditorium_name: data_json.auditorium_name,
+                            auditorium_capacity: data_json.auditorium_capacity,
+                            auditorium_type: data_json.auditorium_type
+                        }, {where: {auditorium: data_json.auditorium}})
                             .then(count => res.end(JSON.stringify({updated_rows: count[0]})))
-                            .catch((err) => {console.log(err); Error400(res, err.toString())})
+                            .catch((err) => {
+                                console.log(err);
+                                Error400(res, err.toString())
+                            })
                     });
                 });
                 break;
@@ -222,44 +283,59 @@ let PUT_handler = (req, res) => {
 let DELETE_handler = (req, res) => {
     let path_mas = url.parse(req.url).pathname.split('/');
     res.writeHead(200, {'Content-Type': 'application/json; charset=utf-8'});
-    if(path_mas.length <= 2)
+    if (path_mas.length <= 2)
         Error400(res, "Element number not specified")
     path_mas[3] = decodeURIComponent(path_mas[3])
-    if(path_mas[1] === "api"){
+    if (path_mas[1] === "api") {
         switch (path_mas[2]) {
             case 'faculties':
                 sequelize.authenticate().then(() => {
-                    db.Faculty.destroy({where:{faculty: path_mas[3]}})
+                    db.Faculty.destroy({where: {faculty: path_mas[3]}})
                         .then(count => res.end(JSON.stringify({"rows deleted": count})))
-                        .catch((err) => {console.log(err); Error400(res, err.toString())})
+                        .catch((err) => {
+                            console.log(err);
+                            Error400(res, err.toString())
+                        })
                 });
                 break;
             case 'pulpits':
                 sequelize.authenticate().then(() => {
-                    db.Pulpit.destroy({where:{pulpit: path_mas[3]}})
+                    db.Pulpit.destroy({where: {pulpit: path_mas[3]}})
                         .then(count => res.end(JSON.stringify({"rows deleted": count})))
-                        .catch((err) => {console.log(err); Error400(res, err.toString())})
+                        .catch((err) => {
+                            console.log(err);
+                            Error400(res, err.toString())
+                        })
                 });
                 break;
             case 'subjects':
                 sequelize.authenticate().then(() => {
-                    db.Subject.destroy({where:{subject: path_mas[3]}})
+                    db.Subject.destroy({where: {subject: path_mas[3]}})
                         .then(count => res.end(JSON.stringify({"rows deleted": count})))
-                        .catch((err) => {console.log(err); Error400(res, err.toString())})
+                        .catch((err) => {
+                            console.log(err);
+                            Error400(res, err.toString())
+                        })
                 });
                 break;
             case 'auditoriumstypes':
                 sequelize.authenticate().then(() => {
-                    db.Auditorium_type.destroy({where:{auditorium_type: path_mas[3]}})
+                    db.Auditorium_type.destroy({where: {auditorium_type: path_mas[3]}})
                         .then(count => res.end(JSON.stringify({"rows deleted": count})))
-                        .catch((err) => {console.log(err); Error400(res, err.toString())})
+                        .catch((err) => {
+                            console.log(err);
+                            Error400(res, err.toString())
+                        })
                 });
                 break;
             case 'auditorims':
                 sequelize.authenticate().then(() => {
-                    db.Auditorium.destroy({where:{auditorium: path_mas[3]}})
+                    db.Auditorium.destroy({where: {auditorium: path_mas[3]}})
                         .then(count => res.end(JSON.stringify({"rows deleted": count})))
-                        .catch((err) => {console.log(err); Error400(res, err.toString())})
+                        .catch((err) => {
+                            console.log(err);
+                            Error400(res, err.toString())
+                        })
                 });
                 break;
             default:
@@ -289,7 +365,7 @@ let http_handler = (req, res) => {
 
 const Error400 = (response, errMess) => {
     console.log(errMess);
-    response.writeHead(400, {'Content-Type':'application/json; charset=utf-8'});
+    response.writeHead(400, {'Content-Type': 'application/json; charset=utf-8'});
     response.end(errMess);
 };
 

@@ -135,11 +135,14 @@ GO
 CREATE OR ALTER PROCEDURE AddOrder
     @customer_id int,
 	@order_date DATE,
-	@required_date DATE
+	@required_date DATE,
+	@order_id int OUT
+	
 AS
 BEGIN
 INSERT INTO orders(customer_id, order_status, order_date, required_date, shipped_date) 
-VALUES(@customer_id, 1, @order_date, @required_date, null)
+VALUES(@customer_id, 1, @order_date, @required_date, null);
+set @order_id = @@IDENTITY
 END;
 go
 
