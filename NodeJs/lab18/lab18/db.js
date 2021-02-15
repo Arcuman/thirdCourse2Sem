@@ -103,7 +103,7 @@ function internalORM(sequelize) {
             }
         },
     );
-    //sequelize.sync({force:true});
+    sequelize.sync({force:true});
 }
 
 exports.ORM = (sequelize) => {
