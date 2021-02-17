@@ -3,11 +3,9 @@ const fs = require('fs');
 let firstTask = fs.readFileSync('./text1.txt');
 let firstTaskEnglish = fs.readFileSync('./text2.txt');
 let secondTask = fs.readFileSync('./text3.txt');
-const thirdTask = fs.readFileSync('./text5.txt');
 
 const alfabhetRussian = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
 const alfabhetEnglish = 'abcdefghijklmnopqrstuvwxyz';
-const alfabhetName = 'борисвантден';
 const alfabhetBinary = '01';
 
 firstTask = firstTask.toString().toLowerCase().replace(/[^А-Яа-яЁё]/gi, '');
@@ -37,24 +35,39 @@ let shanon = (str, alphabet) => {
 
 console.log(`-----------------Задание 1---------------`);
 console.log(`Длина русского текста = ${firstTask.length}`);
-console.log(`Энтропия по Шеннону -russian-: ${shanon(firstTask, alfabhetRussian)}`);
-console.log(`Энтропия по Хартли -russian-: ${hartley(alfabhetRussian.length)}`);
+const HShanonRu =  shanon(firstTask, alfabhetRussian);
+console.log(`Энтропия по Шеннону -russian-: ${HShanonRu}`);
+const HHartleyRu =  hartley(alfabhetRussian.length);
+console.log(`Энтропия по Хартли -russian-: ${HHartleyRu}`);
 console.log(`Длина английского текста = ${firstTaskEnglish.length}`);
 console.log(`Энтропия по Шеннону -english-: ${shanon(firstTaskEnglish, alfabhetEnglish)}`);
 console.log(`Энтропия по Хартли -english-: ${hartley(alfabhetEnglish.length)}`);
 
 console.log(`-----------------Задание 2---------------`);
 console.log(`Длина бинарного текста = ${secondTask.length}`);
-console.log('Энтропия бинарного алфавита:', shanon(secondTask.toString(), alfabhetBinary));
+const HBinary = shanon(secondTask.toString(), alfabhetBinary);
+console.log('Энтропия бинарного алфавита:', HBinary);
 
-let shanonByName = (name, alfabhet) => name.length * shanon(name, alfabhet);
-let hartleyByName = (name, alfabhet) => name.length * hartley(alfabhet.length);
+let countOfInformation = (name, H) => name.length * H;
 
 const str = 'Борисов Антон Андреевич';
-const str1 = str.toLowerCase().replace(regExpSimbols, '');
-
+const str1 = str.toLowerCase().replace(/[^А-Яа-яЁё]/gi, '');
 
 console.log(`-----------------Задание 3---------------`);
-console.log(`Количество информации(по Шеннону): ${shanonByName(str1, alfabhetName)}`);
-console.log(`Количество информации(по Хартли): ${hartleyByName(str1, alfabhetName)}`);
-console.log(`Количество информации(в бинарном виде): ${shanonByName(thirdTask.toString(), alfabhetBinary)}`);
+console.log(`Количество информации(по Шеннону): ${countOfInformation(str1, HShanonRu)}`);
+console.log(`Количество информации(по Хартли): ${countOfInformation(str1, HHartleyRu)}`);
+
+const ruNameASCII = str1.split('').map((letter) =>
+    (letter.charCodeAt() - 848).toString(2)).join('');
+console.log(`Количество информации(в кодах ASCII): ${countOfInformation(ruNameASCII, HBinary)}`);
+
+let lastTask = (p)  => {
+    const q = 1 - p;
+    const h = (- p * Math.log2(p) - q * Math.log2(q));
+    return (h);
+};
+
+console.log(`-----------------Задание 4---------------`);
+console.log("ФИО при 0,1", ( HShanonRu - lastTask(0.1 )) * str1.length);
+console.log("ФИО при 0,5", ( HShanonRu - lastTask(0.5 )) * str1.length);
+console.log("ФИО при 1",   ( HShanonRu - lastTask(1.0 )) * str1.length);
