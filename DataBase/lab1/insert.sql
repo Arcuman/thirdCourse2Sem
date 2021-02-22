@@ -10,10 +10,11 @@ exec AddCustomer 'Misha', 'Sidrob', 'wef@mail.ru', 'Belaruskaya 21', 'Brest'
 go
 begin
 declare @nowDate Date =  CAST( GETDATE() AS Date );
-exec AddOrder 1, @nowDate , @nowDate
-exec AddOrderItem 1 , 1 , 2
-exec AddOrderItem 1 , 3 , 2
-exec AddOrderItem 1 , 2 , 2
+declare @order_id int 
+exec AddOrder 1, @nowDate , @nowDate, @order_id out
+exec AddOrderItem @order_id , 1 , 2 
+exec AddOrderItem @order_id, 3 , 1
+exec AddOrderItem @order_id, 2 , 2
 end
 
 exec GetProducts

@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const homeRoute = require('./controllers/home-controller');
+const homeRoute = require('./controllers/home.router');
 const loginRoute = require('./controllers/login-controller');
 const registerRoute = require('./controllers/register-controller');
 

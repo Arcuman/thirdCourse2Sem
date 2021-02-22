@@ -79,7 +79,7 @@ bool printFileInfo(LPWSTR FileName) {
 int main() {
 	setlocale(LC_ALL,"Russian");
 	SetConsoleOutputCP(1251);
-	LPCWSTR file = L"E:\\bstu\\ThirdCourse\\OS\\labs\\lab9\\lab9\\OS09_01\\OS09_01.txt";
+	LPCWSTR file = L"D:\\BSTU32\\thirdCourse2Sem\\OS\\labs\\lab9\\lab9\\OS09_01\\OS09_01.txt";
 	cout << "Task 1" << endl;
 	if (!printFileInfo(LPWSTR(file)))
 		cout << "Error";

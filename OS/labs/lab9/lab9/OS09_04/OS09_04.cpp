@@ -69,6 +69,6 @@ BOOL printWathRowFileTxt(LPCWSTR FileName, DWORD msec) {
 
 int main()
 {
-    LPCWSTR file = L"E:\\bstu\\ThirdCourse\\OS\\labs\\lab9\\lab9\\OS09_01\\OS09_01.txt";
+    LPCWSTR file = L"D:\\BSTU32\\thirdCourse2Sem\\OS\\labs\\lab9\\lab9\\OS09_01\\OS09_01.txt";
     printWathRowFileTxt(file, 50000);
 }

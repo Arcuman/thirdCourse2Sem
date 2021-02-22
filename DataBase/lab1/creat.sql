@@ -1,4 +1,4 @@
-drop table order_items;
+drop table order_products;
 drop table orders;
 drop table customers;
 drop table products;
@@ -27,20 +27,15 @@ CREATE TABLE orders (
 	order_date DATE NOT NULL,
 	required_date DATE NOT NULL,
 	shipped_date DATE,
+	total_price INT,
 	FOREIGN KEY (customer_id) 
         REFERENCES customers (customer_id) 
         ON DELETE CASCADE ON UPDATE CASCADE,
 );
 
-CREATE TABLE order_items(
+CREATE TABLE order_products(
 	order_item_id INT IDENTITY (1, 1) PRIMARY KEY,
 	order_id INT,
 	product_id INT NOT NULL,
-	quantity INT NOT NULL,
-	FOREIGN KEY (order_id) 
-        REFERENCES orders (order_id) 
-        ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (product_id) 
-        REFERENCES products (product_id) 
-        ON DELETE CASCADE ON UPDATE CASCADE
+	quantity INT NOT NULL
 );

@@ -137,11 +137,10 @@ CREATE OR ALTER PROCEDURE AddOrder
 	@order_date DATE,
 	@required_date DATE,
 	@order_id int OUT
-	
 AS
 BEGIN
-INSERT INTO orders(customer_id, order_status, order_date, required_date, shipped_date) 
-VALUES(@customer_id, 1, @order_date, @required_date, null);
+INSERT INTO orders(customer_id, order_status, order_date, required_date, shipped_date, total_price) 
+VALUES(@customer_id, 1, @order_date, @required_date, null, 0);
 set @order_id = @@IDENTITY
 END;
 go
@@ -177,11 +176,11 @@ Begin
 End;
 go 
 
---ORDER ITEMS
+--ORDER Products 
 go
 CREATE OR ALTER PROCEDURE GetOrderItems AS
 BEGIN 
-	SELECT * FROM order_items
+	SELECT * FROM order_products
 END
 
 go
@@ -189,7 +188,7 @@ CREATE OR ALTER PROCEDURE GetOrderItemById
 	@order_item_id int
 AS
 BEGIN 
-	SELECT * FROM order_items where order_item_id = @order_item_id
+	SELECT * FROM order_products where order_item_id = @order_item_id
 END
 
 go
@@ -197,7 +196,7 @@ CREATE OR ALTER PROCEDURE GetOrderItemByOrderId
 	@order_id int
 AS
 BEGIN 
-	SELECT * FROM order_items where order_id = @order_id
+	SELECT * FROM order_products where order_id = @order_id
 END
 
 
@@ -208,7 +207,7 @@ CREATE OR ALTER PROCEDURE AddOrderItem
 	@quantity int
 AS
 BEGIN
-INSERT INTO order_items(order_id, product_id, quantity) 
+INSERT INTO order_products(order_id, product_id, quantity) 
 VALUES(@order_id, @product_id, @quantity)
 END;
 go
@@ -218,6 +217,27 @@ Create or Alter Procedure DeleteOrderItemById
 		@order_item_id int
 AS
 Begin
-	DELETE order_items where order_items.order_item_id = @order_item_id;
+	DELETE order_products where order_products.order_item_id = @order_item_id;
 End;
 go 
+
+
+
+
+----------------------------
+GO
+CREATE OR ALTER TRIGGER Products_INSERT
+ON order_products
+AFTER INSERT
+AS 
+begin 
+UPDATE orders
+	set total_price = total_price + 
+	(select price from products 
+		where product_id = (select product_id FROM INSERTED)) 
+		* (select quantity FROM INSERTED)
+	where order_id = (select order_id from inserted)
+UPDATE products 
+	set quantity = quantity - (select quantity FROM INSERTED)
+		where product_id = (select product_id from inserted)
+end
