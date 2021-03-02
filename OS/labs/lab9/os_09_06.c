@@ -9,9 +9,9 @@
 char buf[10000];
 
 void even(){
-  int file = open("/home/diana/lw9/os_09_05.txt", O_RDONLY);
+  int file = open("/home/arcuman/lab9/OS09_05.txt", O_RDONLY);
   int n = read(file, buf, 10000);
-  int file_even = open("/home/diana/lw9/os_09_06_2.txt", O_CREAT|O_WRONLY);
+  int file_even = open("/home/arcuman/lab9/os_09_06_2.txt", O_CREAT|O_WRONLY);
   char * end = (char*)malloc(1024);
   int countRow = 0, j =0;
   
@@ -33,9 +33,9 @@ void even(){
   
 void odd(){
   
-   int file = open("/home/diana/lw9/os_09_05.txt", O_RDONLY);
+   int file = open("/home/arcuman/lab9/OS09_05.txt", O_RDONLY);
    int n = read(file, buf, 10000);
-   int file_odd = open("/home/diana/lw9/os_09_06_1.txt", O_CREAT|O_WRONLY);
+   int file_odd = open("/home/arcuman/lab9/os_09_06_1.txt", O_CREAT|O_WRONLY);
   
    char * end = (char*)malloc(1024);
    int countRow = 0, j =0;

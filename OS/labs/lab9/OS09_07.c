@@ -18,7 +18,7 @@ int main(){
 	bool isWrite = true; 
 	buf[s] = '\0'; 
 	
-	if((fd=open("/home/vadim/Документы/lab9/OS09_05.txt", O_RDONLY ))==-1) { 
+	if((fd=open("/home/arcuman/lab9/OS09_05.txt", O_RDONLY ))==-1) { 
 	printf("Cannot open file.\n");
 	exit(0);
 	}

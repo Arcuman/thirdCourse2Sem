@@ -29,7 +29,8 @@ bool printFileInfo(LPWSTR FileName) {
 		CloseHandle(fileHandle);
 		return false;
 	}
-	cout << "File name:" << FileName << endl;
+	wstring wStr = wstring(FileName);
+	wcout << "File name:" << wStr << endl;
 
 	cout << "File type:";
 
@@ -79,7 +80,7 @@ bool printFileInfo(LPWSTR FileName) {
 int main() {
 	setlocale(LC_ALL,"Russian");
 	SetConsoleOutputCP(1251);
-	LPCWSTR file = L"D:\\BSTU32\\thirdCourse2Sem\\OS\\labs\\lab9\\lab9\\OS09_01\\OS09_01.txt";
+	LPCWSTR file = L"D:\\bstu\\thirdCourse2Sem\\OS\\labs\\lab9\\lab9\\OS09_01\\OS09_01.txt";
 	cout << "Task 1" << endl;
 	if (!printFileInfo(LPWSTR(file)))
 		cout << "Error";

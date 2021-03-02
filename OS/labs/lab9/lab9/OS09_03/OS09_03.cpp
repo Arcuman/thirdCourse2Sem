@@ -91,7 +91,6 @@ bool insRowFileTxt(LPWSTR  FileName, LPWSTR str, DWORD row) {
         break;
     }
 
-
     CloseHandle(fileHandle);
     return true;
 }
@@ -112,7 +111,7 @@ bool printFileTxt(LPWSTR FileName) {
 }
 int main() {
     SetConsoleOutputCP(1251);
-    LPCWSTR file = L"D:\\BSTU32\\thirdCourse2Sem\\OS\\labs\\lab9\\lab9\\OS09_01\\OS09_01.txt";
+    LPCWSTR file = L"D:\\bstu\\thirdCourse2Sem\\OS\\labs\\lab9\\lab9\\OS09_01\\OS09_01.txt";
     LPCWSTR srt1 = L"something";
     printFileTxt(LPWSTR(file));
     insRowFileTxt(LPWSTR(file), LPWSTR(srt1), 0);

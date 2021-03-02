@@ -65,7 +65,7 @@ bool printFileTxt(LPWSTR FileName) {
 
 int main()
 {
-    LPCWSTR file = L"D:\\BSTU32\\thirdCourse2Sem\\OS\\labs\\lab9\\lab9\\OS09_01\\OS09_01.txt";
+    LPCWSTR file = L"D:\\bstu\\thirdCourse2Sem\\OS\\labs\\lab9\\lab9\\OS09_01\\OS09_01.txt";
     if (!delRowFileTxt((LPWSTR)file, 1))
         cout << "Error del" << endl;
     if (!delRowFileTxt((LPWSTR)file, 3))

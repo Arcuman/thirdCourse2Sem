@@ -9,7 +9,7 @@
 int main(){
   char buf[10000];
   
-  int in = open("/home/diana/lw9/os_09_05.txt", O_RDONLY);
+  int in = open("/home/arcuman/lab9/OS09_05.txt", O_RDONLY);
   if(in == -1)
   	printf("%d", in);
   int n = read(in, buf, 10000);

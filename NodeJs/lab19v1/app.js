@@ -9,7 +9,6 @@ const productsRouter = require('./components/Product/product.route');
 
 const app = express();
 
-
 app.use(bodyParser());
 app.use(logger('dev'));
 app.use(express.json());
@@ -31,4 +30,10 @@ app.use((err, req, res, next) => {
   res.render('error');
 });
 
-module.exports = app;
+const db = require("./db/models");
+
+db.sequelize.sync().then(()=>{
+  app.listen(3000, () => {
+    console.log(`Server is running on port ${3000}.`);
+  });
+});

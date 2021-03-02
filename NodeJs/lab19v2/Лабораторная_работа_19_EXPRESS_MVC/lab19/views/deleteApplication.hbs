@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Удаление продукта</title>
+    <meta charset="utf-8" />
+</head>
+<body>
+<h1>Удаление заявки</h1>
+<div>
+    <label>Application id</label>
+    <input id="id" name="id" /><br><br>
+    <button onclick="deleteApplication()">delete</button>
+</div>
+<a href="/home">home</a>
+</body>
+<script>
+    let deleteApplication = () =>{
+        let id = document.getElementById("id").value;
+        fetch(`/applications/delete/${id}`,{
+            method: 'DELETE'
+        })
+        location.href = "/home";
+    }
+</script>
+<html>

@@ -1,11 +1,10 @@
 config = {
     username: 'Arcuman',
     password: 'QWEaz45@',
-    database: 'Store',
+    database: 'BAA',
     host: 'localhost',
     dialect: 'mssql',
     logging: false,
-    enableArithAbort: true,
     trustServerCertificate: true,
     pool: {
         max: 5,
@@ -15,3 +14,4 @@ config = {
 }
 
 exports.config = config;
+

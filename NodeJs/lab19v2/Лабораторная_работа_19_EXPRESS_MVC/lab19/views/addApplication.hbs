@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Добавление продукта</title>
+    <meta charset="utf-8" />
+</head>
+<body>
+<h1>Добавление заявки</h1>
+<form action="applications/post" method="POST">
+    <label>tour id</label>
+    <input name="tour_id" /><br><br>
+    <label>client id</label>
+    <input name="client_id" type="number" /><br><br>
+    <label>contract</label>
+    <input name="contract" /><br><br>
+    <label>is_confirmed</label>
+    <input name="is_confirmed" type="number" /><br><br>
+    <input type="submit" value="Отправить" />
+</form>
+<a href="/home">home</a>
+</body>
+<html>
