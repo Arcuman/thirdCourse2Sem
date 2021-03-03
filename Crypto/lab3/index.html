@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+</style>
+<body>
+<main>
+<section>
+<div>
+    <button onclick="getNode2()">Start</button>
+    <label for="val11"></label><input id="val11" type="text">
+    <label for="val12"></label><input id="val12" type="text">
+    <h2 id="answer1"></h2>
+</div>
+
+<div>
+    <button onclick="getNode3()">Start</button>
+    <label for="val21"></label><input id="val21" type="text">
+    <label for="val22"></label><input id="val22" type="text">
+    <label for="val23"></label><input id="val23" type="text">
+    <h2 id="answer2"></h2>
+</div>
+
+<div>
+    <button onclick="getCount()">Start</button>
+    <label for="start"></label><input id="start" type="text">
+    <label for="finish"></label><input id="finish" type="text">
+    <h2 id="answer"></h2>
+</div>
+    <div>
+        <button onclick="getNode4()">Start</button>
+        <label for="count"></label><input id="count" type="text">
+        <h2 id="answer3"></h2>
+    </div>
+</section>
+</main>
+</body>
+<script>
+    getCount = async () => {
+        let start = document.getElementById("start").value;
+        let finish = document.getElementById("finish").value;
+        let user_info = await fetch(`/primeCount?start=${start}&finish=${finish}`,
+            {
+                method: 'GET'
+            });
+        let value = await user_info.json();
+        document.getElementById("answer").innerHTML = "простых чисел в интервале:" +value;
+    }
+
+    getNode2 = async () => {
+        let val11 = document.getElementById("val11").value;
+        let val12 = document.getElementById("val12").value;
+        let user_info = await fetch(`/two?first=${val11}&second=${val12}`,
+            {
+                method: 'GET'
+            });
+        let value = await user_info.json();
+        document.getElementById("answer1").innerHTML = "NOD:" + value;
+    }
+
+    getNode3 = async () => {
+        let val21 = document.getElementById("val21").value;
+        let val22 = document.getElementById("val22").value;
+        let val23 = document.getElementById("val23").value;
+        let user_info = await fetch(`/three?first=${val21}&second=${val22}&third=${val23}`,
+            {
+                method: 'GET'
+            });
+        let value = await user_info.json();
+        document.getElementById("answer2").innerHTML = "NOD:" + value;
+    }
+    getNode4 = async () => {
+        let count = document.getElementById("count").value;
+        let user_info = await fetch(`/simple?first=${count}`,
+            {
+                method: 'GET'
+            });
+        let value = await user_info.json();
+        document.getElementById("answer3").innerHTML = "numbers: " + value;
+    }
+</script>
+</html>

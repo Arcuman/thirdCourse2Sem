@@ -1,11 +1,13 @@
-const readline = require('readline');
+const express = require('express')
+const app = express()
+const port = 3000
 
 const CalculateNOD = (x, y) => {
     while (x !== 0 && y !== 0) {
         if (x > y)
-            x -= +y;
+            x = x % y;
         else
-            y -= +x;
+            y = y % x;
     }
     return Math.max(x, y);
 }
@@ -13,7 +15,7 @@ const CalculateNOD = (x, y) => {
 const IsSimple = (x) => {
     if (x === 1)
         return true;
-    for (let i = 2; i * i <= x; i++)
+    for (let i = 2; i <= Math.floor(Math.sqrt(x)); i++)
         if (x % i === 0)
             return false;
     return true;
@@ -21,6 +23,7 @@ const IsSimple = (x) => {
 
 const SimpleInInterval = (m, n) => {
     let counter = 0;
+    const simpleArrays = [];
     if (n < m) {
         console.log('Incorrect value');
         return;
@@ -29,11 +32,13 @@ const SimpleInInterval = (m, n) => {
     for (let i = m; i <= n; i++) {
         if (IsSimple(i)) {
             console.log(i);
+            simpleArrays.push(i);
             counter++;
         }
     }
     console.log(`Count of simple numbers is ${counter}`);
-    //console.log(`n/ln(n) ${n/Math.log(n)}`);
+    console.log(`n/ln(n) ${n/Math.log(n)}`);
+    return ` ${counter} числа = ${simpleArrays.map(i=> ` ${i} `)} \n n\\ln(n) = ${n/Math.log(n)}`;
 }
 
 const simpleNumbers = a => {
@@ -48,32 +53,32 @@ const simpleNumbers = a => {
             b++;
     }
     console.log(rez.slice(0, -1));
+    return rez.slice(0,-1);
 }
 
-//console.log(CalculateNOD(CalculateNOD(6, 10), 16));
-//SimpleInInterval(450,503);
-//simpleNumbers(450);
-//console.log(CalculateNOD(450, 503));
-console.log('Enter number');
-console.log('1-node 450 and 503, 2- simpleIn interval 450-503, 3-simple numbers of 450 4-custom NOD');
-process.stdin.on('data', function (data) {
-    const input = data.toString('utf8').slice(0, -2);
-    switch (+input) {
-        case 1:
-            console.log(CalculateNOD(450, 503));
-            break;
-        case 2:
-            SimpleInInterval(450, 503);
-            break;
-        case 3:
-            simpleNumbers(450);
-            break;
-        default:
-            console.log('default');
-            break;
-    }
-    console.log('Enter number');
-    console.log('1-node 450 and 503, 2- simpleIn interval 450-503, 3-simple numbers of 450 4-custom NOD');
-});
-//
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/index.html');
+})
 
+app.get('/primeCount', (req, res) => {
+    console.log('primeCount')
+    res.json(SimpleInInterval(+req.query.start, +req.query.finish))
+})
+
+app.get('/two', (req, res) => {
+    console.log('two');
+    console.log(req.query.first)
+    res.send(CalculateNOD(+req.query.first, +req.query.second).toString())
+})
+
+app.get('/three', (req, res) => {
+    console.log('three');
+    res.send(CalculateNOD(CalculateNOD(+req.query.first, +req.query.second),+req.query.third).toString());
+})
+app.get('/simple', (req, res) => {
+    res.json(simpleNumbers(+req.query.first));
+})
+
+app.listen(port, () => {
+    console.log(`Example app listening at http://localhost:${port}`)
+})

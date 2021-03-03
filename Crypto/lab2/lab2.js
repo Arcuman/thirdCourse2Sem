@@ -68,6 +68,6 @@ let lastTask = (p)  => {
 };
 
 console.log(`-----------------Задание 4---------------`);
-console.log("ФИО при 0,1", ( HShanonRu - lastTask(0.1 )) * str1.length);
-console.log("ФИО при 0,5", ( HShanonRu - lastTask(0.5 )) * str1.length);
-console.log("ФИО при 1",   ( HShanonRu - lastTask(1.0 )) * str1.length);
+console.log("ФИО при 0,1", ( 1 - lastTask(0.1 )) * ruNameASCII.length);
+console.log("ФИО при 0,5", ( 1 - lastTask(0.5 )) * ruNameASCII.length);
+console.log("ФИО при 1",   ( 1 - lastTask(1.0 )) * ruNameASCII.length);
