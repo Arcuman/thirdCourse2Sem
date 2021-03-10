@@ -8,9 +8,8 @@ namespace ConsoleApp1.models
 {
     class OrderItem
     {
-        public OrderItem(int orderId, int productId, int quantity)
+        public OrderItem(int productId, int quantity)
         {
-            OrderId = orderId;
             ProductId = productId;
             Quantity = quantity;
         }

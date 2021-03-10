@@ -20,4 +20,6 @@ end
 exec GetProducts
 exec GetCustomers
 exec GetOrders
+
+select SUM(total_price) from orders where order_date >= '2020-01-01' and order_date < '2022-01-01'
 exec GetOrderItems

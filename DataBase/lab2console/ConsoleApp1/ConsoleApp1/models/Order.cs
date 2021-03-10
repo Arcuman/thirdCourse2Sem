@@ -20,15 +20,11 @@ namespace ConsoleApp1.models
             TotalPrice = totalPrice;
         }
 
-        public Order(int customId, int orderStatus, DateTime orderDate, DateTime requiredDate, DateTime shippedDate, int totalPrice, List<OrderItem> products)
+        public Order(int customId, DateTime orderDate, DateTime requiredDate)
         {
             CustomId = customId;
-            OrderStatus = orderStatus;
             OrderDate = orderDate;
             RequiredDate = requiredDate;
-            ShippedDate = shippedDate;
-            TotalPrice = totalPrice;
-            Products = products;
         }
 
         public int OrderId { get; set; }

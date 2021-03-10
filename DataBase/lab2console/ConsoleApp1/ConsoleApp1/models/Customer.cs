@@ -35,7 +35,7 @@ namespace ConsoleApp1.models
 
         public override string ToString()
         {
-            return FirstName + " " + LastName ;
+            return FirstName + " " + LastName  + " " + Email + " " + Addres + " " + City;
         }
     }
 }

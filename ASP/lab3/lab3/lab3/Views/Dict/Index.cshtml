@@ -1,0 +1,32 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Телефонный справочник</title>
+</head>
+<body>
+    <div>
+        <h3>Телефонный справочник</h3>
+        <table>
+            <tr>
+                <td><p>Name</p></td>
+                <td><p>Number</p></td>
+                <td></td>
+            </tr>
+            @foreach (var b in ViewBag.PhoneBook)
+            {
+                <tr>
+                    <td><p>@b.Name</p></td>
+                    <td><p>@b.PhoneNumber</p></td>
+                    <td><p><a href="/Dict/Update/@b.Id">Изменить</a></p></td>
+                </tr>
+            }
+        </table>
+    </div>
+</body>
+</html>

@@ -62,16 +62,17 @@ namespace ConsoleApp1
 
         public void add_Customer(Customer customer)
         {
-            SqlCommand command = new SqlCommand("AddCustomer", conn)
+            using (
+            SqlCommand command = new SqlCommand("AddCustomer", conn))
             {
-                CommandType = CommandType.StoredProcedure
-            };
-            command.Parameters.Add("@first_name", sqlDbType: SqlDbType.NVarChar).Value = customer.FirstName;
-            command.Parameters.Add("@last_name", sqlDbType: SqlDbType.NVarChar).Value = customer.LastName;
-            command.Parameters.Add("@email", sqlDbType: SqlDbType.NVarChar).Value = customer.Email;
-            command.Parameters.Add("@address", sqlDbType: SqlDbType.NVarChar).Value = customer.Addres;
-            command.Parameters.Add("@city", sqlDbType: SqlDbType.NVarChar).Value = customer.City;
-            command.ExecuteNonQuery();
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.Add("@first_name", sqlDbType: SqlDbType.NVarChar).Value = customer.FirstName;
+                command.Parameters.Add("@last_name", sqlDbType: SqlDbType.NVarChar).Value = customer.LastName;
+                command.Parameters.Add("@email", sqlDbType: SqlDbType.NVarChar).Value = customer.Email;
+                command.Parameters.Add("@address", sqlDbType: SqlDbType.NVarChar).Value = customer.Addres;
+                command.Parameters.Add("@city", sqlDbType: SqlDbType.NVarChar).Value = customer.City;
+                command.ExecuteNonQuery();
+            }
         }
 
         public void drop_Customer(Customer customer)
@@ -87,37 +88,71 @@ namespace ConsoleApp1
         public List<Customer> get_Customers()
         {
             List<Customer> customers = new List<Customer>();
-            SqlCommand command = new SqlCommand("GetCustomers", conn)
+            using (SqlCommand command = new SqlCommand("GetCustomers", conn))
             {
-                CommandType = CommandType.StoredProcedure
-            };
-
-            var reader = command.ExecuteReader();
-            if (reader.HasRows)
-            {
-                while (reader.Read()) // построчно считываем данные
+                command.CommandType = CommandType.StoredProcedure;
+                var reader = command.ExecuteReader();
+                if (reader.HasRows)
                 {
-                    var customer = new Customer(Convert.ToInt32(reader["customer_id"]), (string)reader["first_name"], (string)reader["last_name"],
-                        (string)reader["email"], (string)reader["address"], (string)reader["city"]);
-                    customers.Add(customer);
+                    while (reader.Read()) // построчно считываем данные
+                    {
+                        var customer = new Customer(Convert.ToInt32(reader["customer_id"]), (string)reader["first_name"], (string)reader["last_name"],
+                            (string)reader["email"], (string)reader["address"], (string)reader["city"]);
+                        customers.Add(customer);
+                    }
                 }
+                reader.Close();
+
+            }
+            return customers;
+        }
+
+        public List<Product> get_Products()
+        {
+            List<Product> customers = new List<Product>();
+            using (SqlCommand command = new SqlCommand("GetProducts", conn))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                var reader = command.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read()) // построчно считываем данные
+                    {
+                        var customer = new Product(Convert.ToInt32(reader["product_id"]), (string)reader["product_name"], Convert.ToInt32(reader["price"]),
+                            Convert.ToInt32(reader["quantity"]));
+                        customers.Add(customer);
+                    }
+                }
+                reader.Close();
+
             }
             return customers;
         }
 
         public void change_Customer(Customer customer)
         {
-            SqlCommand command = new SqlCommand("UpdateCustomer", conn)
+            using (
+            SqlCommand command = new SqlCommand("UpdateCustomer", conn))
             {
-                CommandType = CommandType.StoredProcedure
-            };
-            command.Parameters.Add("@customer_id", sqlDbType: SqlDbType.Int).Value = customer.CustomID;
-            command.Parameters.Add("@first_name", sqlDbType: SqlDbType.NVarChar).Value = customer.FirstName;
-            command.Parameters.Add("@last_name", sqlDbType: SqlDbType.NVarChar).Value = customer.LastName;
-            command.Parameters.Add("@email", sqlDbType: SqlDbType.NVarChar).Value = customer.Email;
-            command.Parameters.Add("@address", sqlDbType: SqlDbType.NVarChar).Value = customer.Addres;
-            command.Parameters.Add("@city", sqlDbType: SqlDbType.NVarChar).Value = customer.City;
-            command.ExecuteNonQuery();
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.Add("@customer_id", sqlDbType: SqlDbType.Int).Value = customer.CustomID;
+                command.Parameters.Add("@first_name", sqlDbType: SqlDbType.NVarChar).Value = customer.FirstName;
+                command.Parameters.Add("@last_name", sqlDbType: SqlDbType.NVarChar).Value = customer.LastName;
+                command.Parameters.Add("@email", sqlDbType: SqlDbType.NVarChar).Value = customer.Email;
+                command.Parameters.Add("@address", sqlDbType: SqlDbType.NVarChar).Value = customer.Addres;
+                command.Parameters.Add("@city", sqlDbType: SqlDbType.NVarChar).Value = customer.City;
+                command.ExecuteNonQuery();
+            }
+        }
+
+        public int getOrdersSum(DateTime start, DateTime end)
+        {
+            var sql = $"select SUM(total_price) from orders where order_date >= '{start}' and order_date < '{end}'";
+            using (SqlCommand command = new SqlCommand(sql, conn))
+            {
+                var reader = command.ExecuteScalar();
+                return Convert.ToInt32(reader);
+            }
         }
 
         // ----------------------------------------------------------------------------
@@ -151,7 +186,6 @@ namespace ConsoleApp1
             }
             return (int)outputIdParam.Value;
         }
-
 
     }
 }
