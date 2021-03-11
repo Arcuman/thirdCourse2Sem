@@ -121,6 +121,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\DictController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -164,8 +165,13 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Dict\Index.cshtml" />
     <Content Include="Views\Dict\Add.cshtml" />
+    <Content Include="Views\Dict\Delete.cshtml" />
+    <Content Include="Views\Dict\Edit.cshtml" />
+    <Content Include="Views\Error.cshtml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Views\Error\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

@@ -1,32 +1,39 @@
-﻿@{
-    Layout = null;
+﻿@model IEnumerable<lab3.Models.PhoneNote>
+
+@{
+    ViewBag.Title = "Index";
 }
 
-<!DOCTYPE html>
+<h2>Index</h2>
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Телефонный справочник</title>
-</head>
-<body>
-    <div>
-        <h3>Телефонный справочник</h3>
-        <table>
-            <tr>
-                <td><p>Name</p></td>
-                <td><p>Number</p></td>
-                <td></td>
-            </tr>
-            @foreach (var b in ViewBag.PhoneBook)
-            {
-                <tr>
-                    <td><p>@b.Name</p></td>
-                    <td><p>@b.PhoneNumber</p></td>
-                    <td><p><a href="/Dict/Update/@b.Id">Изменить</a></p></td>
-                </tr>
-            }
-        </table>
-    </div>
-</body>
-</html>
+<p>
+    @Html.ActionLink("Create New", "Add")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PhoneNumber)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PhoneNumber)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+            </td>
+        </tr>
+    }
+
+</table>
