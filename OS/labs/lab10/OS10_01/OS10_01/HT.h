@@ -16,29 +16,36 @@ namespace HT    // HT API
 	//          Close  - выполнить Snap и закрыть HT-хранилище для использования
 	//          GetLastError - получить сообщение о последней ошибке
 
+	struct HTMeta
+	{
+		HTMeta();
+		HTMeta
+		(
+			int Capacity,
+			int SecSnapshotInterval,
+			int MaxKeyLength,
+			int MaxPayloadLength
+		);
+		int     Capacity;               // емкость хранилища в количестве элементов 
+		int     SecSnapshotInterval;    // переодичность сохранения в сек. 
+		int     MaxKeyLength;           // максимальная длина ключа
+		int     MaxPayloadLength;       // максимальная длина данных
+	};
 
 	struct HTHANDLE    // блок управления HT
 	{
 		HTHANDLE();
-		HTHANDLE(int Capacity, int SecSnapshotInterval, int MaxKeyLength, int MaxPayloadLength, const wchar_t FileName[512]);
-		int     Capacity = 20;               // емкость хранилища в количестве элементов 
-		int     SecSnapshotInterval = 120;    // переодичность сохранения в сек. 
-		int     MaxKeyLength = 64;           // максимальная длина ключа
-		int     MaxPayloadLength = 64;       // максимальная длина данных
-		wchar_t    FileName[512] = L"map.txt";          // имя файла 
-		HANDLE  File = 0;                   // File HANDLE != 0, если файл открыт
-		HANDLE  FileMapping = 0;            // Mapping File HANDLE != 0, если mapping создан  
-		LPVOID  Addr = 0;                   // Addr != NULL, если mapview выполнен. Адрас з якога пачынаюцца элементы  
-		char    LastErrorMessage[512] = "\0";  // сообщение об последней ошибке или 0x00  
-		time_t  lastsnaptime = 0;           // дата последнего snap'a (time())  
-
-		wchar_t mutexName[512];
-		wchar_t fileMapName[512];
-		wchar_t timerName[512];
-
-		DWORD creatorPid;
-		HANDLE hTimer;
-		HANDLE hTimerThread;
+		HTHANDLE(int Capacity, int SecSnapshotInterval, int MaxKeyLength, int MaxPayloadLength, const char FileName[512]);
+		int     Capacity;               // емкость хранилища в количестве элементов 
+		int     SecSnapshotInterval;    // переодичность сохранения в сек. 
+		int     MaxKeyLength;           // максимальная длина ключа
+		int     MaxPayloadLength;       // максимальная длина данных
+		char    FileName[512];          // имя файла 
+		HANDLE  File;                   // File HANDLE != 0, если файл открыт
+		HANDLE  FileMapping;            // Mapping File HANDLE != 0, если mapping создан  
+		LPVOID  Addr;                   // Addr != NULL, если mapview выполнен  
+		char    LastErrorMessage[512];  // сообщение об последней ошибке или 0x00  
+		time_t  lastsnaptime;           // дата последнего snap'a (time())  
 	};
 
 	struct Element   // элемент 
@@ -47,9 +54,9 @@ namespace HT    // HT API
 		Element(const void* key, int keylength);                                             // for Get
 		Element(const void* key, int keylength, const void* payload, int  payloadlength);    // for Insert
 		Element(Element* oldelement, const void* newpayload, int  newpayloadlength);         // for update
-		void* key;                 // значение ключа 
+		const void* key;                 // значение ключа 
 		int             keylength;           // рахмер ключа
-		void* payload;             // данные 
+		const void* payload;             // данные 
 		int             payloadlength;       // размер данных
 	};
 
@@ -59,12 +66,12 @@ namespace HT    // HT API
 		int   SecSnapshotInterval,		   // переодичность сохранения в сек.
 		int   MaxKeyLength,                // максимальный размер ключа
 		int   MaxPayloadLength,            // максимальный размер данных
-		const char  FileName[512]          // имя файла 
+		LPCWSTR  FileName          // имя файла 
 	); 	// != NULL успешное завершение  
 
 	HTHANDLE* Open     //  открыть HT             
 	(
-		const char    FileName[512]         // имя файла 
+		LPCWSTR    FileName        // имя файла 
 	); 	// != NULL успешное завершение  
 
 	BOOL Snap         // выполнить Snapshot
@@ -98,11 +105,6 @@ namespace HT    // HT API
 		const Element* element              // элемент 
 	); 	//  != NULL успешное завершение 
 
-	int PrintAll     // print all elements aand return their count
-	(
-		HTHANDLE* ht           // управление HT
-	); 	//  != NULL успешное завершение 
-
 
 	BOOL Update     //  именить элемент в хранилище
 	(
@@ -112,7 +114,7 @@ namespace HT    // HT API
 		int             newpayloadlength     // размер новых данных
 	); 	//  != NULL успешное завершение 
 
-	char* GetLastError1  // получить сообщение о последней ошибке
+	char* GetLastError  // получить сообщение о последней ошибке
 	(
 		HTHANDLE* ht                         // управление HT
 	);
