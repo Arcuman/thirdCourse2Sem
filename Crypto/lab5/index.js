@@ -18,7 +18,7 @@ const encryptRoute = (text, rows, cols, res) => {
         for (let i = 0, k = 0; i < rows; i++) {
             const row = []
             for (let j = 0; j < cols; j++, k++) {
-                row.push(text[k] ?? '0')
+                row.push(text[k] ?? ' ')
             }
             matrix.push(row);
         }
@@ -66,10 +66,10 @@ const enctyptRoute2 = (lastName, firstName, text, res) => {
     const n = text.length;
     if (n > lastName.length * firstName.length)
         res.send("Invalid input n>row*col");
-    const key1 = lastName.toLowerCase();
-    const key2 = firstName.toLowerCase();
-    const cols = key1.length;
-    const rows = key2.length;
+    const key1 = lastName.toLowerCase().split("");
+    const key2 = firstName.toLowerCase().split("");
+    const rows = key1.length;
+    const cols = key2.length;
     let matrix = [];
     let rowMatrix = createMatrix(key1.length, key2.length);
     let encMatrix = createMatrix(key1.length, key2.length);
@@ -77,29 +77,51 @@ const enctyptRoute2 = (lastName, firstName, text, res) => {
     for (let i = 0, k = 0; i < rows; i++) {
         const row = []
         for (let j = 0; j < cols; j++, k++) {
-            row.push(text[k] ?? '0')
+            row.push(text[k] ?? ' ')
         }
         matrix.push(row);
     }
     console.log(matrix)
-    const newKey1 = key1.split("").slice().sort().join("");
-    const newKey2 = key2.split("").slice().sort().join("");
+    const newKey1 = key1.slice().sort();
+    const newKey2 = key2.slice().sort();
     console.log(key1);
     console.log(newKey1);
-
+    let map = new Map();
+    key1.forEach(symbol => {
+        map.set(symbol, 1)
+    })
+    console.log(map);
     for (let i = 0; i < newKey1.length; i++) {
-        for (let j = 0; j < key1.length; j++) {
+        for (let j = 0, k = 1; j < key1.length; j++) {
             if (newKey1[i] === key1[j]) {
-                rowMatrix[i] = matrix[j];
+                const time = map.get(key1[j])
+                if (k === time) {
+                    rowMatrix[i] = matrix[j];
+                    map.set(key1[j], (map.get(key1[j]) + 1));
+                    break;
+                } else {
+                    k++
+                }
             }
         }
     }
-
+    console.log(rowMatrix);
+    map = new Map();
+    key2.forEach(symbol => {
+        map.set(symbol, 1)
+    })
     for (let i = 0; i < newKey2.length; i++) {
-        for (let j = 0; j < key2.length; j++) {
+        for (let j = 0, k = 1; j < key2.length; j++) {
             if (newKey2[i] === key2[j]) {
-                for (let k = 0; k < rows; k++)
-                    encMatrix[k][i] = rowMatrix[k][j];
+                const time = map.get(key2[j])
+                if (k === time) {
+                    map.set(key2[j], (map.get(key2[j]) + 1));
+                    for (let k = 0; k < rows; k++)
+                        encMatrix[k][i] = rowMatrix[k][j];
+                }
+                else{
+                    k++;
+                }
             }
         }
     }
