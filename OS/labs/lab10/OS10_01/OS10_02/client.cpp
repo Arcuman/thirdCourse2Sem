@@ -1,11 +1,16 @@
-#include "HT.h"
+// OS10_02.cpp : This file contains the 'main' function. Program execution begins and ends there.
+//
 
+#include <iostream>
+#include "OS10_HTAPI.h"
 using namespace HT;
 
 int main()
 {
 	const wchar_t* FileName = (LPWSTR)L"D:\\bstu\\thirdCourse2Sem\\OS\\labs\\lab10\\HT\\example.ht";
 
+	std::experimental::filesystem::path path(FileName);
+	std::cout << path.filename() << std::endl;
 	std::string key1 = "key1";
 	std::string data1 = "data1";
 	std::string dataX = "XXXXX";
@@ -19,7 +24,7 @@ int main()
 	}
 	Element* element1 = new Element(key1.c_str(), key1.length(), data1.c_str(), data1.length());
 	Element* element2 = new Element(key2.c_str(), key2.length(), data2.c_str(), data2.length());
-	if ( !Insert(hashTable, element1)) {
+	if (!Insert(hashTable, element1)) {
 		std::cout << hashTable->LastErrorMessage;
 	}
 	if (!Insert(hashTable, element2)) {

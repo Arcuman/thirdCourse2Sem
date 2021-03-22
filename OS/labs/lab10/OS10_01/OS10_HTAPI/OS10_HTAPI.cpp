@@ -1,5 +1,8 @@
+п»ї#include "pch.h"
 #include <Windows.h>
-#include "HT.h"
+#include <iostream>
+#include "OS10_HTAPI.h"
+typedef unsigned char byte;
 
 #define FULL_ELEMENT_SIZE (sizeof(Element) + htHandle->MaxKeyLength + htHandle->MaxPayloadLength)
 
@@ -46,16 +49,16 @@ namespace HT
 	// Helpers
 	void CorrectAddresses(HTHANDLE* htHandle)
 	{
-		//указатель на адресс в памяти
+		//СѓРєР°Р·Р°С‚РµР»СЊ РЅР° Р°РґСЂРµСЃСЃ РІ РїР°РјСЏС‚Рё
 		byte* pointer = (byte*)htHandle->Addr;
-		//итерируемся по всем вставленным объектам
+		//РёС‚РµСЂРёСЂСѓРµРјСЃСЏ РїРѕ РІСЃРµРј РІСЃС‚Р°РІР»РµРЅРЅС‹Рј РѕР±СЉРµРєС‚Р°Рј
 		for (int i = 0; i < htHandle->CurrentCapacity; i++)
 		{
 			byte* currentPointer = pointer + (FULL_ELEMENT_SIZE * i);
 			Element* currentElement = (Element*)currentPointer;
-			//указатель на ключ
+			//СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РєР»СЋС‡
 			currentElement->Key = currentPointer + sizeof(Element);
-			//указатель на данные
+			//СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РґР°РЅРЅС‹Рµ
 			currentElement->Payload = currentPointer + sizeof(Element) + htHandle->MaxKeyLength;
 		}
 	}
@@ -216,7 +219,6 @@ namespace HT
 	BOOL Insert(HTHANDLE* htHandle, const Element* element)
 	{
 		WaitForSingleObject(htHandle->Mutex, INFINITE);
-
 		if (htHandle->CurrentCapacity == htHandle->Capacity)
 		{
 			ReleaseMutex(htHandle->Mutex);
@@ -274,6 +276,7 @@ namespace HT
 		}
 
 		ReleaseMutex(htHandle->Mutex);
+		SetLastErrorMsg((HTHANDLE*)htHandle, "Element not found error");
 		return NULL;
 	}
 
@@ -304,6 +307,7 @@ namespace HT
 		if (deletedElement == NULL)
 		{
 			ReleaseMutex(htHandle->Mutex);
+			SetLastErrorMsg((HTHANDLE*)htHandle, "Element not found error");
 			return false;
 		}
 
@@ -336,13 +340,14 @@ namespace HT
 	BOOL Close(const HTHANDLE* htHandle)
 	{
 		WaitForSingleObject(htHandle->Mutex, INFINITE);
-
+		TerminateThread(htHandle->SnapThread, 0);
 		if (CloseHandle(htHandle->SnapThread) &&
 			CloseHandle(htHandle->FileMapping) &&
 			CloseHandle(htHandle->File) &&
 			ReleaseMutex(htHandle->Mutex) &&
 			CloseHandle(htHandle->Mutex) &&
-			UnmapViewOfFile(htHandle))
+			UnmapViewOfFile(htHandle)
+			)
 		{
 			return true;
 		}

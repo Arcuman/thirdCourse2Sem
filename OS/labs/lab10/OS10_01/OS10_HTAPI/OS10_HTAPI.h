@@ -1,6 +1,7 @@
 #pragma once
 #define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
 #include <Windows.h>
+#include <windef.h>
 #include <iostream>
 #include <string>
 #include <experimental/filesystem>
