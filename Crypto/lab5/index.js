@@ -110,23 +110,100 @@ const enctyptRoute2 = (lastName, firstName, text, res) => {
     key2.forEach(symbol => {
         map.set(symbol, 1)
     })
+    console.log('KEY2')
+    console.log(key2);
+    console.log(newKey2);
+    console.log(map);
     for (let i = 0; i < newKey2.length; i++) {
         for (let j = 0, k = 1; j < key2.length; j++) {
             if (newKey2[i] === key2[j]) {
                 const time = map.get(key2[j])
                 if (k === time) {
                     map.set(key2[j], (map.get(key2[j]) + 1));
-                    for (let k = 0; k < rows; k++)
-                        encMatrix[k][i] = rowMatrix[k][j];
-                }
-                else{
+                    for (let o = 0; o < rows; o++)
+                        encMatrix[o][i] = rowMatrix[o][j];
+                    console.log(encMatrix);
+                } else {
                     k++;
                 }
             }
         }
     }
     console.log(encMatrix);
-    res.send(encMatrix)
+    res.send(encMatrix);
+}
+
+const denctyptRoute2 = (lastName, firstName, text, res) => {
+    const n = text.length;
+    if (n > lastName.length * firstName.length)
+        res.send("Invalid input n>row*col");
+    let key1 = lastName.toLowerCase().split("");
+    let key2 = firstName.toLowerCase().split("");
+    const rows = key1.length;
+    const cols = key2.length;
+    let matrix = [];
+    let rowMatrix = createMatrix(key1.length, key2.length);
+    let encMatrix = createMatrix(key1.length, key2.length);
+
+    for (let i = 0, k = 0; i < rows; i++) {
+        const row = []
+        for (let j = 0; j < cols; j++, k++) {
+            row.push(text[k] ?? ' ')
+        }
+        matrix.push(row);
+    }
+    console.log(matrix)
+    let newKey1 = key1.slice().sort();
+    let newKey2 = key2.slice().sort();
+    [newKey1, key1] = [key1, newKey1];
+    [newKey2, key2] = [key2, newKey2];
+    console.log(key1);
+    console.log(newKey1);
+    let map = new Map();
+    key1.forEach(symbol => {
+        map.set(symbol, 1)
+    })
+    console.log(map);
+    for (let i = 0; i < newKey1.length; i++) {
+        for (let j = 0, k = 1; j < key1.length; j++) {
+            if (newKey1[i] === key1[j]) {
+                const time = map.get(key1[j])
+                if (k === time) {
+                    rowMatrix[i] = matrix[j];
+                    map.set(key1[j], (map.get(key1[j]) + 1));
+                    break;
+                } else {
+                    k++
+                }
+            }
+        }
+    }
+    console.log(rowMatrix);
+    map = new Map();
+    key2.forEach(symbol => {
+        map.set(symbol, 1)
+    })
+    console.log('KEY2')
+    console.log(key2);
+    console.log(newKey2);
+    console.log(map);
+    for (let i = 0; i < newKey2.length; i++) {
+        for (let j = 0, k = 1; j < key2.length; j++) {
+            if (newKey2[i] === key2[j]) {
+                const time = map.get(key2[j])
+                if (k === time) {
+                    map.set(key2[j], (map.get(key2[j]) + 1));
+                    for (let o = 0; o < rows; o++)
+                        encMatrix[o][i] = rowMatrix[o][j];
+                    console.log(encMatrix);
+                } else {
+                    k++;
+                }
+            }
+        }
+    }
+    console.log(encMatrix);
+    res.send(encMatrix);
 }
 
 app.post('/encrypt', (req, res) => {
@@ -139,6 +216,9 @@ app.post('/decrypt', (req, res) => {
 
 app.post('/encrypt2', (req, res) => {
     enctyptRoute2(req.body.lastName, req.body.firstName, req.body.text, res);
+})
+app.post('/dencrypt2', (req, res) => {
+    denctyptRoute2(req.body.lastName, req.body.firstName, req.body.text, res);
 })
 
 app.listen(port, (err) => {

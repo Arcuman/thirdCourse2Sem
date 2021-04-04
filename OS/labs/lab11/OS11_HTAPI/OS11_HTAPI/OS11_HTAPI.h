@@ -31,8 +31,8 @@ namespace HT{
 
 extern "C" OS11_HTAPI_API struct HTHANDLE    // блок управления HT
 	{
-		HTHANDLE();
-		HTHANDLE(int Capacity, int SecSnapshotInterval, int MaxKeyLength, int MaxPayloadLength, const wchar_t FileName[512]);
+	OS11_HTAPI_API HTHANDLE();
+	OS11_HTAPI_API HTHANDLE(int Capacity, int SecSnapshotInterval, int MaxKeyLength, int MaxPayloadLength, const wchar_t FileName[512]);
 		int     Capacity;               // емкость хранилища в количестве элементов 
 		int     SecSnapshotInterval;    // переодичность сохранения в сек. 
 		int     MaxKeyLength;           // максимальная длина ключа
@@ -51,10 +51,10 @@ extern "C" OS11_HTAPI_API struct HTHANDLE    // блок управления HT
 
 extern "C" OS11_HTAPI_API struct Element   // элемент 
 	{
-		Element();
-		Element(const void* key, int keylength);                                             // for Get
-		Element(const void* key, int keylength, const void* payload, int  payloadlength);    // for Insert
-		Element(Element* oldelement, const void* newpayload, int  newpayloadlength);         // for update
+		OS11_HTAPI_API Element();
+		OS11_HTAPI_API Element(const void* key, int keylength);                                             // for Get
+		OS11_HTAPI_API Element(const void* key, int keylength, const void* payload, int  payloadlength);    // for Insert
+		OS11_HTAPI_API Element(Element* oldelement, const void* newpayload, int  newpayloadlength);         // for update
 		void* key;                 // значение ключа 
 		int             keylength;           // рахмер ключа
 		void* payload;             // данные 

@@ -3,7 +3,7 @@
 #include <iostream>
 #include "OS11_HTAPI.h"
 #include <wchar.h>
-
+#include <string>
 
 
 wchar_t* GetWC(const char* c)
@@ -17,7 +17,7 @@ wchar_t* GetWC(const char* c)
 
 int main(int argc, char* argv[])
 {
-	int capacity = 10;
+	int capacity = 1000;
 	int snapshotIntervalSec = 2;
 	int maxKeyLength = 10;
 	int maxPayloadLength = 10;
@@ -25,7 +25,11 @@ int main(int argc, char* argv[])
 	const wchar_t* directoryPath = L"D:\\bstu\\thirdCourse2Sem\\OS\\labs\\lab11\\HT\\";
 	std::wstring filePath (L"D:\\bstu\\thirdCourse2Sem\\OS\\labs\\lab11\\HT\\test.ht");
 	try {
-	if (argv[1]) {
+	if (argv[1] && argv[2] && argv[3] && argv[4] && argv[5]) {
+		capacity = std::stoi(argv[2]);
+		snapshotIntervalSec = std::stoi(argv[3]);
+		maxKeyLength = std::stoi(argv[4]);
+		maxPayloadLength = std::stoi(argv[5]);
 		fileName = GetWC(argv[1]);
 		std::wstring s(directoryPath);
 		s += std::wstring(fileName);

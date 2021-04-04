@@ -3,12 +3,14 @@
 #include <utility>
 #include <limits.h>
 #include "OS11_HTAPI.h"
+#include <algorithm>
 
 namespace HT {
 	int HashFunction(const Element* element, int size, int p);
 	int Next_hash(int hash, int size, int p);
 	DWORD WINAPI SnapShotCycle(HTHANDLE* ht);
 	wchar_t* GenerateMutexName(const wchar_t* pathToHT);
+	wchar_t* GenerateViewName(const wchar_t* pathToHT);
 	BOOL CheckParmLength(HTHANDLE* ht, Element* element);
 	BOOL CheckParmLength(HTHANDLE* ht, int payloadLength);
 
@@ -87,12 +89,14 @@ namespace HT {
 			PAGE_READWRITE,
 			0, HTsize, NULL);
 		if (!hm)return NULL;
+		std::cout << "Open FileMapping: " << hm << std::endl;
 
 		LPVOID lp = MapViewOfFile(
 			hm,
-			FILE_MAP_ALL_ACCESS,
+			FILE_MAP_ALL_ACCESS | FILE_MAP_READ | FILE_MAP_WRITE,
 			0, 0, 0);
 		if (!lp)return NULL;
+		std::cout << "Open MapViewOfFile: " << lp << std::endl;
 
 		ZeroMemory(lp, HTsize);
 		HTHANDLE* ht = new(lp) HTHANDLE(
@@ -135,14 +139,16 @@ namespace HT {
 			hf,
 			NULL,
 			PAGE_READWRITE,
-			0, 0, L"name");
+			0, 0, GenerateViewName(FileName));
 		if (!hm)return NULL;
 		std::cout << "Open FileMapping: " << hm << std::endl;
 		LPVOID lp = MapViewOfFile(
 			hm,
-			FILE_MAP_ALL_ACCESS,
+			FILE_MAP_ALL_ACCESS | FILE_MAP_READ | FILE_MAP_WRITE,
 			0, 0, 0);
-		if (!lp)return NULL;
+		if (!lp) {
+			return NULL;
+		}
 		std::cout << "Open MapViewOfFile: " << lp << std::endl;
 
 		HTHANDLE* ht = (HTHANDLE*)lp;
@@ -152,7 +158,7 @@ namespace HT {
 		ht->Mutex = CreateMutex(
 			NULL,
 			FALSE,
-			L"mutex");
+			GenerateMutexName(FileName));
 
 		DWORD SnapShotThread = NULL;
 		if (!(ht->SnapshotThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)SnapShotCycle, ht, 0, &SnapShotThread))) return NULL;
@@ -164,22 +170,20 @@ namespace HT {
 		HANDLE mutex = CreateMutex(
 			NULL,
 			FALSE,
-			L"mutex");
+			GenerateMutexName(FileName));
 		WaitForSingleObject(mutex, INFINITE);
-		//hm = OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, L"name");
-		hm = OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, L"name");
 		std::cout << _Post_equals_last_error_::GetLastError();
-		std::cout << hm;
+		//hm = OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, L"name");
+		hm = OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, GenerateViewName(FileName));
+		std::cout << _Post_equals_last_error_::GetLastError();
 		if (!hm)return NULL;
-		std::cout << "OpenExist FileMapping: " << hm << std::endl;
 
 		LPVOID lp = MapViewOfFile(
 			hm,
-			FILE_MAP_ALL_ACCESS,
+			FILE_MAP_ALL_ACCESS | FILE_MAP_READ | FILE_MAP_WRITE,
 			0, 0, 0);
 		std::cout << _Post_equals_last_error_::GetLastError();
 		if (!lp)return NULL;
-		std::cout << "OpenExist MapViewOfFile: " << lp << std::endl;
 		ReleaseMutex(mutex);
 		HTHANDLE* ht = (HTHANDLE*)lp;
 		ht->FileMapping = hm;
@@ -209,7 +213,6 @@ namespace HT {
 		memcpy(&file, &hthandle->File, sizeof(HANDLE));
 		memcpy(&mutex, &hthandle->Mutex, sizeof(HANDLE));
 		TerminateThread(hthandle->SnapshotThread, 0);
-		if (!UnmapViewOfFile(hthandle->Addr)) return FALSE;
 		if (!CloseHandle(mapping))return FALSE;
 		if (!CloseHandle(file))return FALSE;
 		if (!CloseHandle(mutex))return FALSE;
@@ -231,25 +234,30 @@ namespace HT {
 		if (!CheckParmLength(hthandle, element))
 			return FALSE;
 		WaitForSingleObject(hthandle->Mutex, INFINITE);
+		HANDLE temp = hthandle->Addr;
+		LPVOID addr = MapViewOfFile(hthandle->FileMapping,
+		FILE_MAP_ALL_ACCESS | FILE_MAP_READ | FILE_MAP_WRITE,
+		0, 0, 0);
 		bool inserted = false;
 		if (hthandle->N != hthandle->Capacity)
 		{
 			for (int i = 0, j = HashFunction(element, hthandle->Capacity, 0);
 				i != hthandle->Capacity && !inserted;  j = Next_hash(j, hthandle->Capacity, ++i)) {
 				Element* elFromHT = GetElementFromHT(hthandle, j);
-				if (elFromHT == NULL || IsDeleted(elFromHT))
-				{
-					SetElementToHT(hthandle, element, j);
-					hthandle->N++;
-					inserted = true;
+				if (!IsDeleted(elFromHT)) {
+					if (EqualElementKeys(elFromHT, element)) {
+						SetErrorMessage(hthandle, "Key exists\n", 12);
+						ReleaseMutex(hthandle->Mutex);
+						return FALSE;
+					}
 				}
-				if (elFromHT != NULL && EqualElementKeys(elFromHT, element)) {
-					SetErrorMessage(hthandle, "Key exists\n", 12);
-					ReleaseMutex(hthandle->Mutex);
-					return FALSE;
-				}
+				SetElementToHT(hthandle, element, j);
+				hthandle->N++;
+				inserted = true;
+				
 			}
 		}
+		UnmapViewOfFile(addr); 
 		ReleaseMutex(hthandle->Mutex);
 		return inserted;
 	}
@@ -263,6 +271,7 @@ namespace HT {
 		if (!CheckParmLength(hthandle, element))
 			return NULL;
 		WaitForSingleObject(hthandle->Mutex, INFINITE);
+
 		int indexInHT = -1;
 		bool found = false;
 		if (hthandle->N != 0)
@@ -294,6 +303,10 @@ namespace HT {
 		if (!CheckParmLength(hthandle, element))
 			return FALSE;
 		WaitForSingleObject(hthandle->Mutex, INFINITE);
+		HANDLE temp = hthandle->Addr;
+		LPVOID addr = MapViewOfFile(hthandle->FileMapping,
+			FILE_MAP_ALL_ACCESS | FILE_MAP_READ | FILE_MAP_WRITE,
+			0, 0, 0);
 		int indexInHT = -1;
 		bool deleted = false;
 		if (hthandle->N != 0)
@@ -314,7 +327,8 @@ namespace HT {
 		}
 
 		SetDeletedFlag(GetElementFromHT(hthandle, indexInHT));
-		hthandle->N--;
+		hthandle->N--; 
+		UnmapViewOfFile(addr);
 		ReleaseMutex(hthandle->Mutex);
 		return TRUE;
 	}
@@ -451,20 +465,15 @@ namespace HT {
 				if (time(NULL) >= ht->lastsnaptime + ht->SecSnapshotInterval)
 				{
 					std::cout << "-----SNAPSHOT WAIT-----" << std::endl;
+					Sleep(1000);
 					WaitForSingleObject(ht->Mutex, INFINITE);
+					Sleep(500);
 					LPVOID addr = MapViewOfFile(
 						ht->FileMapping,
-						FILE_MAP_ALL_ACCESS,
+						FILE_MAP_ALL_ACCESS | FILE_MAP_READ | FILE_MAP_WRITE,
 						0, 0, 0);
 					std::cout << "filemap: " << ht->FileMapping << std::endl;
-					std::cout << "map of view: " << addr << std::endl;
-					if (!FlushViewOfFile(addr, NULL)) {
-						std::cout << "-----SNAPSHOT error-----" << std::endl;
-						std::cout << _Post_equals_last_error_::GetLastError();
-						SetErrorMessage(ht, "Snapshot error", 15);
-						return FALSE;
-					}
-					ht->lastsnaptime = time(NULL);
+					std::cout << "map of view: " << ht->Addr << std::endl;
 					std::cout << "----SNAPSHOT in Thread----" << std::endl;
 					UnmapViewOfFile(addr);
 					ReleaseMutex(ht->Mutex);
@@ -477,16 +486,18 @@ namespace HT {
 	}
 
 	wchar_t* GenerateMutexName(const wchar_t* pathToHT) {
-		wchar_t mutexName[MAX_PATH];
-		ZeroMemory(mutexName, sizeof(mutexName));
-		int j = 0;
-		for (int i = 0; i < wcslen(pathToHT); i++) {
-			if (pathToHT[i] == L'\\') {
-				continue;
-			}
-			mutexName[j++] = pathToHT[i];
-		}
-		return mutexName;
+		std::wstring s(pathToHT);
+		std::wstring mutexName;
+		s.erase(std::remove(s.begin(), s.end(), '\\'), s.end());
+		std::wcout << s;
+		return (wchar_t*)s.c_str();
+	}
+	wchar_t* GenerateViewName(const wchar_t* pathToHT) {
+		std::wstring s(pathToHT);
+		std::wstring mutexName;
+		s.erase(std::remove(s.begin(), s.end(), '\\'), s.end());
+		std::wcout << s;
+		return (wchar_t*)s.c_str();
 	}
 
 	BOOL CheckParmLength(HTHANDLE* ht, Element* element) {

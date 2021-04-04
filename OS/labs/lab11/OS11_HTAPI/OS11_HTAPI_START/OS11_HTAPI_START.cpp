@@ -29,9 +29,6 @@ int main(int argc, char* argv[])
 			s += std::wstring(fileName);
 			filePath = s;
 		}
-		else {
-
-		}
 		HT::HTHANDLE* HT;
 		HT = HT::Open(filePath.c_str());
 		if (HT == NULL)
