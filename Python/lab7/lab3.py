@@ -24,7 +24,7 @@ y = np.array([1, 2, 3, 4, 5, 6])
 clf = MultinomialNB()
 clf.fit(X, y)
 
-print(clf.predict(X[2:3]))
+print(clf.predict(X[1:2]))
 
 # Классификатор GaussianNB
 
@@ -38,4 +38,4 @@ print(clf.predict([[-0.8, -1]]))
 clf_pf = GaussianNB()
 clf_pf.partial_fit(X, Y, np.unique(Y))
 
-print(clf_pf.predict([[-0.8, -1]]))
+print(clf_pf.predict([[0.8, 1]]))

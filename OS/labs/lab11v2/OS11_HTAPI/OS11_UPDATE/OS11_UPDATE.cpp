@@ -5,6 +5,7 @@
 #include <wchar.h>
 #include <string>
 #include <sstream>
+#include <ctime>
 
 wchar_t* GetWC(const char* c)
 {
@@ -28,13 +29,14 @@ void printStr(char* str) {
 
 int main(int argc, char* argv[])
 {
+	srand(time(0));
 	int capacity = 10;
 	int snapshotIntervalSec = 2;
 	int maxKeyLength = 10;
 	int maxPayloadLength = 10;
 	wchar_t* fileName;
-	const wchar_t* directoryPath = L"D:\\bstu\\thirdCourse2Sem\\OS\\labs\\lab11\\HT\\";
-	std::wstring filePath(L"D:\\bstu\\thirdCourse2Sem\\OS\\labs\\lab11\\HT\\test.ht");
+	const wchar_t* directoryPath = L"D:\\bstu\\thirdCourse2Sem\\OS\\labs\\lab11v2\\HT\\";
+	std::wstring filePath(L"D:\\bstu\\thirdCourse2Sem\\OS\\labs\\lab11v2\\HT\\test.ht");
 	try {
 		if (argv[1]) {
 			fileName = GetWC(argv[1]);
@@ -42,13 +44,13 @@ int main(int argc, char* argv[])
 			s += std::wstring(fileName);
 			filePath = s;
 		}
-		HT::HTHANDLE* HT = new HT::HTHANDLE();
+		HT::HTHANDLE* HT;
 		HT = HT::OpenExist(filePath.c_str());
 		if (HT == NULL)
 			throw "Invalid handle";
 
-		for (int i = 0; i < 25; i++) {
-			int numberKey = rand() % 10 + 1;
+		for (; ; ) {
+			int numberKey = rand() % 50 + 1;
 			std::string key;
 			std::stringstream convert;
 			convert << numberKey;

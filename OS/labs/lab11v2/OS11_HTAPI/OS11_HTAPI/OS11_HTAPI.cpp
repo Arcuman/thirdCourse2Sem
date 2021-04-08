@@ -243,7 +243,7 @@ namespace HT {
 			for (int i = 0, j = HashFunction(element, hthandle->Capacity, 0);
 				i != hthandle->Capacity && !inserted;  j = Next_hash(j, hthandle->Capacity, ++i)) {
 				Element* elFromHT = GetElementFromHT(hthandle, j);
-				if (!IsDeleted(elFromHT)) {
+				if (elFromHT!= NULL && !IsDeleted(elFromHT)) {
 					if (EqualElementKeys(elFromHT, element)) {
 						SetErrorMessage(hthandle, "Key exists\n", 12);
 						ReleaseMutex(hthandle->Mutex);
@@ -253,7 +253,7 @@ namespace HT {
 				SetElementToHT(hthandle, element, j);
 				hthandle->N++;
 				inserted = true;
-				
+
 			}
 		}
 		ReleaseMutex(hthandle->Mutex);
@@ -321,7 +321,7 @@ namespace HT {
 		}
 
 		SetDeletedFlag(GetElementFromHT(hthandle, indexInHT));
-		hthandle->N--; 
+		hthandle->N--;
 		ReleaseMutex(hthandle->Mutex);
 		return TRUE;
 	}
