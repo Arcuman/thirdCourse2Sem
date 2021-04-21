@@ -15,7 +15,7 @@ namespace lab5b.Controllers
             return View();
         }
         static int x = 9;
-        [OutputCache(Duration = 5, Location = OutputCacheLocation.ServerAndClient, NoStore = false), HttpGet]
+        [OutputCache(Duration = 5, Location = OutputCacheLocation.ServerAndClient), HttpGet]
         public ActionResult AD()
         {
             x++;

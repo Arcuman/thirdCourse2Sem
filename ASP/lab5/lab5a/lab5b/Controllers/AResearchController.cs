@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -23,6 +24,7 @@ namespace lab5b.Controllers
         [ARFilter]
         public ActionResult AR()
         {
+            HttpContext.Response.StatusCode = 308;
             return Content($"AR result\n");
         }
 
@@ -30,7 +32,7 @@ namespace lab5b.Controllers
         public ActionResult AE()
         {
             throw new Exception("Exception in AE Action");
-            return Content($"AE worked right\n"); ;
+            return Content($"AE worked right\n");
         }
 
         public class AAFilter : FilterAttribute, IActionFilter
@@ -49,14 +51,19 @@ namespace lab5b.Controllers
 
         public class ARFilter : FilterAttribute, IResultFilter
         {
-            public void OnResultExecuted(ResultExecutedContext filterContext)
-            {
-                filterContext.HttpContext.Response.Write($"AR:Вызов после возвращение результата действия\n{filterContext.HttpContext.Timestamp.Ticks}\n");
-            }
+            private Stopwatch timer;
 
             public void OnResultExecuting(ResultExecutingContext filterContext)
             {
-                filterContext.HttpContext.Response.Write($"AA:Вызов до вовзаращение резульата действия\n{filterContext.HttpContext.Timestamp.Ticks}\n");
+                timer = Stopwatch.StartNew();
+            }
+
+            public void OnResultExecuted(ResultExecutedContext filterContext)
+            {
+                timer.Stop();
+                filterContext.HttpContext.Response.Write(
+                        string.Format("<div>Время обработки результата: {0:F6}</div>",
+                            timer.Elapsed.TotalSeconds));
             }
         }
 

@@ -56,6 +56,6 @@ app.get("/logout", (req, res) => {
 });
 
 app.use(function (request, response) {
-    response.sendStatus(404);
+    response.sendStatus(404).send('Not found');
 });
 app.listen(3000);

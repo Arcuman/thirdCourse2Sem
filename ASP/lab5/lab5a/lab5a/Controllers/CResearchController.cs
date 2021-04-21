@@ -17,7 +17,7 @@ namespace lab5a.Controllers
             {
                 body = reader.ReadToEnd();
             }
-            return $"body: {body}; " + $"header: {Request.Headers.ToString()}; " + $"method: {Request.HttpMethod}; " + $"uri: {Request.Url.AbsoluteUri}; " + $"params: {Request.QueryString["param"]}; ";
+            return (Request.HttpMethod == "POST" ? $"body: {body}; " : "") + $"header: {Request.Headers.ToString()}; " + $"method: {Request.HttpMethod}; " + $"uri: {Request.Url.AbsoluteUri}; " + $"params: {Request.QueryString["param"]}; ";
         }
 
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Post)]
