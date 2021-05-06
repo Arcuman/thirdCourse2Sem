@@ -14,7 +14,7 @@ db.commits = require("./commits")(Sequelize, sequelize);
 db.users.hasMany(db.repos, { as: "repos" });
 db.repos.belongsTo(db.users);
 
-db.repos.hasMany(db.repos, { as: "commits" });
-db.commits.belongsTo(db.repos);
+db.repos.hasMany(db.commits, { as: "commits" });
+db.commits.belongsTo(db.users);
 
 module.exports = db;

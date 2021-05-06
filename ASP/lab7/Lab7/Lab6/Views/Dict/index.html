@@ -1,0 +1,101 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Lab7-WebAPI</title>
+    <style>
+        #container {
+            position: relative;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+
+        .phoneCard {
+            position: relative;
+            width: 30%;
+            margin: 1vh;
+            box-shadow: 0 2px 10px 1px rgba(0, 0, 0,0.3);
+            border-color: #080808;
+            background: #353535;
+            color: #dddddd;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+
+    </div>
+
+    <div>
+        <br />
+        <input type="text" class="lastName" />
+        <input type="number" class="phone" min="0" />
+        <button id="buttonAdd" onclick="addPhone()">Добавить</button>
+    </div>
+
+    <script src="/Scripts/jquery-3.4.1.min.js"></script>
+    <script>
+
+        const API_Uri = "/ts";
+
+        function loadAll() {
+            const container = $('#container');
+            container.empty();
+
+            fetch(API_Uri).then(response => response.json())
+                .then(phones => {
+                    phones.forEach(phone => {
+                        console.log(phone);
+                        container.append($(`
+                                                            <div class="phoneCard">
+                                                                <h4>Имя:<input type="text" class="lastName-${phone.Id}" value="${phone.Name}" /></h4>
+                                                                <h4>Телефон:<input type="text" class="phone-${phone.Id}" value="${phone.Phone_Number}" /></h4>
+
+                                                                <button id="buttonUpdate" onclick="updatePhone('${phone.Id}')">Обновить</button>
+                                                                <button id="buttonDelete" onclick="deletePhone('${phone.Id}')">Удалить</button>
+                                                            </div>
+                                                    `));
+                    });
+                });
+        }
+
+        function addPhone() {
+            const Name = $('.lastName').val();
+            const Phone_Number = $('.phone').val();
+            fetch(API_Uri, {
+                headers: { "Content-Type": 'application/json' },
+                method: 'POST',
+                body: JSON.stringify({
+                    Name,
+                    Phone_Number
+                })
+            }).then(loadAll);
+        }
+
+        function updatePhone(Id) {
+            const Name = $(`.lastName-${Id}`).val();
+            const Phone_Number = $(`.phone-${Id}`).val();
+            fetch(API_Uri, {
+                headers: { "Content-Type": 'application/json' },
+                method: 'PUT',
+                body: JSON.stringify({
+                    Id,
+                    Name,
+                    Phone_Number
+                })
+            }).then(loadAll);
+        }
+
+        function deletePhone(id) {
+            fetch(API_Uri + `?id=${id}`, {
+                method: 'DELETE'
+            })
+                .then(loadAll);
+        }
+
+        loadAll();
+    </script>
+</body>
+</html>

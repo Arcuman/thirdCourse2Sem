@@ -11,6 +11,7 @@ module.exports = (Sequelize, sequelize) => {
             username: { type: Sequelize.STRING, allowNULL: false },
             password: { type: Sequelize.STRING, allowNULL: false },
             age: { type: Sequelize.INTEGER },
+            role: { type: Sequelize.INTEGER },
         },
         { sequelize, modelName: "users", tableName: "users" }
     );

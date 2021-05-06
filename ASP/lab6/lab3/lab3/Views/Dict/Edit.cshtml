@@ -1,0 +1,23 @@
+﻿@model PhoneDictionary.PhoneNote
+@using lab3.Helpers
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Header {
+    <h2>Update Phone Note in Dictionary</h2>
+}
+
+<div>
+    @Html.UpdatePhoneForm((object)Model)
+
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+@section Footer {
+    <p>&copy; @DateTime.Now.Year -Update Footer</p>
+}

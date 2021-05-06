@@ -1,0 +1,14 @@
+﻿<div class="phoneCard">
+    <div class="phoneCardHeader">
+        <div class="phoneCardHeaderItem">ФИО</div>
+        <div class="phoneCardHeaderItem">Телефон</div>
+        <div class="phoneCardHeaderItem"></div>
+        <div class="phoneCardHeaderItem"></div>
+    </div>
+    <div class="phoneCardBody">
+        <div class="phoneCardBodyItem">@Model.Name</div>
+        <div class="phoneCardBodyItem">@Model.PhoneNumber</div>
+        <div class="phoneCardBodyItem"><p><a href="/Dict/Edit/@Model.Id">Обновить</a></p></div>
+        <div class="phoneCardBodyItem"><p><a href="/Dict/Delete/@Model.Id">Удалить</a></p></div>
+    </div>
+</div>

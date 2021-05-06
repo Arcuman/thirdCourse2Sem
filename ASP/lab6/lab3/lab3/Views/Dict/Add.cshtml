@@ -1,0 +1,22 @@
+﻿@model PhoneDictionary.PhoneNote
+@using lab3.Helpers
+@{
+    ViewBag.Title = "Add";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Header {
+    <div>
+        <h3>Add new phone</h3>
+    </div>
+}
+
+<div>
+    @Html.AddPhoneForm()
+
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Footer {
+    <p>&copy; @DateTime.Now.Year - Footer from add</p>
+}

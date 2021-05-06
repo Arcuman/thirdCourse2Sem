@@ -5,16 +5,52 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const urlencodedParser = bodyParser.urlencoded({extended: false});
 const jwt = require("./jwt");
+const jwtToken = require("jsonwebtoken");
 const config = require("./config");
 const cookieParser = require("cookie-parser");
-const { sequelize } = require("./models");
+const {sequelize} = require("./models");
 const userRouter = require('./Router/user.route');
-
+const reposRouter = require('./Router/repos.route');
+const expressjwt = require('express-jwt');
+const createAbilities = require('./middlewars/defineAbility');
+const {secret, tokens} = require("./config").jwt;
+const Role = require('./models/Role')
 const app = express();
 app.use(cookieParser());
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+
+app.use(express.urlencoded({extended: false}));
+
+app.use(expressjwt({
+    secret,
+    algorithms: ['HS256'],
+    getToken: (req) => {
+        console.log(req.headers.authorization)
+        console.log('express jwt')
+        let GUEST_TOKEN = jwtToken.sign({role: Role.Guest}, secret);
+        console.log(GUEST_TOKEN)
+        if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+            return req.headers.authorization.split(' ')[1];
+        } else {
+            return GUEST_TOKEN;
+        }
+    }
+}))
+app.use(createAbilities);
+
+app.get('/ability', ((req, res) => {
+    console.log('here');
+    res.send(req.ability.rules);
+}));
 app.use('/api/user', userRouter);
+app.use('/api/repos',((req, res, next) => {
+    console.log(req.ability.rules);
+    if (req.ability.can('read', 'Repos')) {
+        next()
+    } else {
+        return res.status(403).send({message: 'You are not allowed to do this!'})
+    }
+}), reposRouter);
 
 app.get("/login", (req, res) => {
     console.log(req.cookies)
@@ -37,12 +73,12 @@ app.post("/login", urlencodedParser, async (req, res) => {
     else {
         res.cookie(
             config.jwt.tokens.refresh.type,
-            jwt.generateRefreshToken(req.body.username),
+            jwt.generateRefreshToken(req.body.username, resultFind[0].role),
             config.refreshOptions
         );
         res.cookie(
             config.jwt.tokens.access.type,
-            jwt.generateAccessToken(req.body.username),
+            jwt.generateAccessToken(req.body.username, resultFind[0].role, resultFind[0].id),
             config.accessOptions
         );
         return res.redirect("/resource");
@@ -64,22 +100,23 @@ app.post("/Register", urlencodedParser, async (req, res) => {
             age: req.body.age,
         });
         return res.redirect("/login");
-    } catch(e) {
+    } catch (e) {
         console.log(e);
         return res.sendStatus(404);
     }
 });
+
 app.get("/logout", (req, res) => {
-    res.cookie(config.jwt.tokens.refresh.type, {},{ expires: new Date(Date.now()), maxAge : 0, path: "/refresh-token"})
-    res.cookie(config.jwt.tokens.access.type, {},{ expires: new Date(Date.now()) , maxAge : 0})
+    res.cookie(config.jwt.tokens.refresh.type, {}, {expires: new Date(Date.now()), maxAge: 0, path: "/refresh-token"})
+    res.cookie(config.jwt.tokens.access.type, {}, {expires: new Date(Date.now()), maxAge: 0})
     res.clearCookie(config.jwt.tokens.refresh.type)
     res.clearCookie(config.jwt.tokens.access.type)
     res.redirect("/login");
 });
 
 app.get("/refresh-token", jwt.CheckJwtRefresh, (req, res) => {
-    res.cookie(config.jwt.tokens.refresh.type, {},{ expires: new Date(Date.now()), maxAge : 0})
-    res.cookie(config.jwt.tokens.access.type, {},{ expires: new Date(Date.now()) , maxAge : 0})
+    res.cookie(config.jwt.tokens.refresh.type, {}, {expires: new Date(Date.now()), maxAge: 0})
+    res.cookie(config.jwt.tokens.access.type, {}, {expires: new Date(Date.now()), maxAge: 0})
     res.clearCookie(config.jwt.tokens.refresh.type)
     res.clearCookie(config.jwt.tokens.access.type)
     res.cookie(
@@ -95,11 +132,12 @@ app.get("/refresh-token", jwt.CheckJwtRefresh, (req, res) => {
     res.redirect("/resource");
 });
 
-app.use(function (request, response) {
-    response.sendStatus(404).send("Error");
+app.use(function (err, request, response, next) {
+    console.log(err);
+    return response.sendStatus(404).send(err);
 });
 
-sequelize.sync().then((res)=>{
+sequelize.sync({alter: true}).then((res) => {
     app.listen(3000, () => {
         console.log('run on 3000')
     });

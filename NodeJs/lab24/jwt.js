@@ -2,11 +2,14 @@ const { secret, tokens } = require("./config").jwt;
 const jwt = require("jsonwebtoken");
 const UserService = require("./Services/UsersServices");
 const blackList = require("./black-box");
+
 module.exports = {
-    generateAccessToken: (username) => {
+    generateAccessToken: (username, role, id) => {
         const payload = {
             username: username,
             type: tokens.access.type,
+            role,
+            id
         };
         const options = { expiresIn: tokens.access.expiresIn };
         return jwt.sign(payload, secret, options);

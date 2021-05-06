@@ -1,0 +1,14 @@
+let number = 14..toString(2).padStart(6,0);
+let count = 1;
+do
+{
+    console.log(`${count}: ${number}`);
+    let xor = number[0] ^ number[1] ^ number[3] ^ number[5];
+	console.log("xor: ",xor)
+    number = number.split("");
+	number.unshift(xor.toString());
+    number = number.join("").substr(0, 6);
+    count++;
+} while (number.toString(2) != "001110" && count < 64)
+
+console.log(number);

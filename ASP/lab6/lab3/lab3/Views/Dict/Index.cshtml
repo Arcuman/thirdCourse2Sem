@@ -1,0 +1,23 @@
+﻿@model IEnumerable<PhoneDictionary.PhoneNote>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Header {
+    <h2>Phone list</h2>
+}
+<p>
+    @Html.ActionLink("Create New", "Add")
+</p>
+<div class="phonesCardArea">
+    @foreach (var item in Model)
+    {
+        @Html.Partial("PartialPhone", (object)item)
+    }
+</div>
+
+@section Footer {
+    <p>&copy; @DateTime.Now.Year - Phone list Footer</p>
+}
