@@ -75,3 +75,134 @@ STDMETHODIMP OS13::Create(
 	}
 	return S_OK;
 }
+
+STDMETHODIMP OS13::Open(
+	const wchar_t    FileName[512],         // имя файла 
+	HT::HTHANDLE** result
+) {
+	HT::HTHANDLE* temp = HT::Open(FileName);
+	if (temp == NULL)
+		return E_FAIL;
+	*result = temp;
+	if (*result != NULL)
+		return S_OK;
+	else
+		return E_FAIL;
+}
+
+STDMETHODIMP OS13::OpenExist(
+	const wchar_t    FileName[512],         // имя файла 
+	HT::HTHANDLE** result
+) {
+	HT::HTHANDLE* temp = HT::OpenExist(FileName);
+	if (temp == NULL)
+		return E_FAIL;
+	*result = temp;
+	if (*result != NULL)
+		return S_OK;
+	else
+		return E_FAIL;
+}
+
+STDMETHODIMP OS13::Close(
+	HT::HTHANDLE** hthandle
+) {
+	bool isSuc =  HT::Close(*hthandle);
+	if (isSuc)
+		return S_OK;
+	else
+		return E_FAIL;
+}
+
+STDMETHODIMP OS13::Snap(
+	HT::HTHANDLE** hthandle
+) {
+	if (HT::Snap(*hthandle))
+		return S_OK;
+	else
+		return E_FAIL;
+}
+
+STDMETHODIMP OS13::Insert(
+	HT::HTHANDLE** hthandle,            // управление HT
+	HT::Element** element              // элемент
+) {
+	if (HT::Insert(*hthandle, *element))
+		return S_OK;
+	else
+		return E_FAIL;
+}
+
+STDMETHODIMP OS13::Get(
+	HT::Element** result,
+	HT::HTHANDLE** hthandle,            // управление HT
+	HT::Element** element              // элемент
+) {
+	HT::Element* temp = HT::Get(*hthandle, *element);
+	if (temp == NULL)
+		return E_FAIL;
+	*result = temp;
+	return S_OK;
+}
+
+STDMETHODIMP OS13::Delete(
+	HT::HTHANDLE** hthandle,            // управление HT (ключ)
+	HT::Element** element              // элемент 
+) {
+	if (HT::Delete(*hthandle, *element))
+		return S_OK;
+	else
+		return E_FAIL;
+}
+
+STDMETHODIMP OS13::Update(
+	HT::HTHANDLE** hthandle,            // управление HT
+	HT::Element** oldelement,          // старый элемент (ключ, размер ключа)
+	void** newpayload,          // новые данные  
+	int*             newpayloadlength     // размер новых данных
+) {
+	if (HT::Update(*hthandle, *oldelement, *newpayload, *newpayloadlength))
+		return S_OK;
+	else
+		return E_FAIL;
+}
+
+STDMETHODIMP OS13::GetLastErrorProg(
+	std::string& error,
+	HT::HTHANDLE** ht                         // управление HT
+) {
+	error = std::string(HT::GetLastErrorProg(*ht));
+	return S_OK;
+}
+
+STDMETHODIMP OS13::CreateElement(
+	std::string* key,
+	HT::Element** el                         // управление HT
+) {
+	HT::Element* temp = new HT::Element((*key).c_str(), (*key).length() + 1);
+	if (temp == NULL)
+		return E_FAIL;
+	*el = temp;
+	return S_OK;
+}
+STDMETHODIMP OS13::CreateElement(
+	std::string* key,
+	std::string* payload,
+	HT::Element** el			                  // управление HT
+) {
+	HT::Element* temp = new HT::Element((*key).c_str(), (*key).length() + 1, (*payload).c_str(), (*payload).length() + 1);
+	if (temp == NULL)
+		return E_FAIL;
+	*el = temp;
+	return S_OK;
+	
+}
+
+STDMETHODIMP OS13::print(
+	HT::Element** element              // элемент 
+) {
+	HT::print(*element);
+	return S_OK;
+}
+
+

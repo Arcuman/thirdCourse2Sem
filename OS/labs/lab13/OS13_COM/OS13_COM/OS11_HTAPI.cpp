@@ -4,7 +4,8 @@
 #include <limits.h>
 #include "OS11_HTAPI.h"
 #include <algorithm>
-
+#include "SEQLOG.h"
+extern HMODULE hmodule;
 namespace HT {
 	HANDLE Addr;
 
@@ -203,7 +204,7 @@ namespace HT {
 	BOOL Snap(HTHANDLE* hthandle) {
 		std::cout << "-----SNAPSHOT WAIT-----" << std::endl;
 		WaitForSingleObject(hthandle->Mutex, INFINITE);
-		if (!FlushViewOfFile(hthandle->Addr, NULL)) {
+		if (!FlushViewOfFile(Addr, NULL)) {
 			SetErrorMessage(hthandle, "Snapshot error", 15);
 			ReleaseMutex(hthandle->Mutex);
 			return FALSE;
@@ -215,7 +216,7 @@ namespace HT {
 	}
 
 	BOOL Close(const HTHANDLE* hthandle) {
-		HANDLE mapping, file, mutex;
+		HANDLE mapping, file, mutex, addr;
 
 		memcpy(&mapping, &hthandle->FileMapping, sizeof(HANDLE));
 		memcpy(&file, &hthandle->File, sizeof(HANDLE));
@@ -422,6 +423,8 @@ namespace HT {
 	}
 
 	BOOL EqualElementKeys(Element* el1, Element* el2) {
+		// print(el1);
+		// print(el2);
 		return !memcmp(el1->key, el2->key, el2->keylength) ? TRUE : FALSE;
 	}
 
@@ -469,6 +472,8 @@ namespace HT {
 					}
 					ht->lastsnaptime = time(NULL);
 					std::cout << "----SNAPSHOT in Thread----" << std::endl;
+					SEQ;
+					LOG("----SNAPSHOT in File----", hmodule);
 
 					ReleaseMutex(ht->Mutex);
 				}

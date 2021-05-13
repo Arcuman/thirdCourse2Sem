@@ -88,7 +88,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\bstu\thirdCourse2Sem\OS\labs\lab13\OS13_COM\OS13_COM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\bstu\thirdCourse2Sem\OS\labs\lab13\OS13_COM\OS13_HTCOM;D:\bstu\thirdCourse2Sem\OS\labs\lab13\OS13_COM\OS13_COM;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -141,6 +141,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OS13_HTCOM\OS13_HTCOM.vcxproj">
+      <Project>{1a57c4b3-cd2e-42a0-92ea-36b2d934a3fb}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

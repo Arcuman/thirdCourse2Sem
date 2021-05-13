@@ -30,5 +30,77 @@ interface IOS13 :IUnknown {
 		HT::HTHANDLE** result
 	)) PURE; 	// != NULL успешное завершение  
 
+	STDMETHOD(Open     //  открыть HT             
+	(
+		const wchar_t    FileName[512],         // имя файла 
+		HT::HTHANDLE** result
+	)) PURE; 	// != NULL успешное завершение  
+
+	STDMETHOD(Close     //  открыть HT             
+	(
+		HT::HTHANDLE** hthandle           // управление HT (File, FileMapping)
+	)) PURE; 	// != NULL успешное завершение 
+
+	STDMETHOD(OpenExist     //  открыть HT             
+	(
+		const wchar_t    FileName[512],         // имя файла 
+		HT::HTHANDLE** result
+	)) PURE; 	// != NULL успешное завершение 
+
+	STDMETHOD(Snap     //  открыть HT             
+	(
+		HT::HTHANDLE** hthandle
+	)) PURE; 	// != NULL успешное завершение 
+
+	STDMETHOD(Insert     //  открыть HT             
+	(
+		HT::HTHANDLE** hthandle,            // управление HT
+		HT::Element** element              // элемент
+	)) PURE; 	// != NULL успешное завершение
+
+	STDMETHOD(Get     //  открыть HT             
+	(
+		HT::Element** result,
+		HT::HTHANDLE** hthandle,            // управление HT
+		HT::Element** element              // элемент 
+	)) PURE; 	// != NULL успешное завершение
+
+	STDMETHOD(Delete     //  открыть HT             
+	(
+		HT::HTHANDLE** hthandle,            // управление HT (ключ)
+		HT::Element** element              // элемент 
+	)) PURE; 	// != NULL успешное завершение
+
+	STDMETHOD(Update     //  открыть HT             
+	(
+		HT::HTHANDLE** hthandle,            // управление HT
+		HT::Element** oldelement,          // старый элемент (ключ, размер ключа)
+		void** newpayload,          // новые данные  
+		int*   newpayloadlength     // размер новых данных
+	)) PURE; 	// != NULL успешное завершение
+
+	STDMETHOD(GetLastErrorProg     //  открыть HT             
+	(
+		std::string& error,
+		HT::HTHANDLE** ht                         // управление HT
+	)) PURE; 	// != NULL успешное завершение
+
+	STDMETHOD(CreateElement     //  открыть HT             
+	(
+		std::string* key,
+		HT::Element** el                         // управление HT
+	)) PURE; 	// != NULL успешное завершение
+
+	STDMETHOD(CreateElement     //  открыть HT             
+	(
+		std::string* key,
+		std::string* payload,
+		HT::Element** el                         // управление HT
+	)) PURE; 	// != NULL успешное завершение
+
+	STDMETHOD(print     //  открыть HT             
+	(
+		HT::Element** element              // элемент 
+	)) PURE; 	// != NULL успешное завершение
 };
 

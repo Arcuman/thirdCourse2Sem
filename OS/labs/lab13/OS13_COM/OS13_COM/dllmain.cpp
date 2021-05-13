@@ -21,7 +21,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     {
     case DLL_PROCESS_ATTACH:
         hmodule = hModule;
-        LogCOM.open("D:\\bstu\\thirdCourse2Sem\\OS\\labs\\lab12\\OS12\\logs\\logCom.txt", std::ios_base::out);
+        LogCOM.open("D:\\bstu\\thirdCourse2Sem\\OS\\labs\\lab13\\HT\\logCom.txt", std::ios_base::out);
         break;
     case DLL_THREAD_ATTACH:
     case DLL_THREAD_DETACH:

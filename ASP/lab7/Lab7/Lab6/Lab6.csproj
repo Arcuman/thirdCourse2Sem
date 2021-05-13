@@ -197,6 +197,10 @@
       <DependentUpon>PhoneDictService.asmx</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Services\WebService1.asmx.cs">
+      <DependentUpon>WebService1.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -222,6 +226,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Services\PhoneDictService.asmx" />
+    <Content Include="Services\WebService1.asmx" />
     <Content Include="Views\Dict\index.html" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">

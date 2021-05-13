@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
-using Lab7b.PhoneDictService; //ДЛЯ asmx
-//using Lab7b.ServiceReference1; //для WCF
+//using Lab7b.PhoneDictService; //ДЛЯ asmx
+using Lab7b.ServiceReference1; //для WCF
 
 namespace Lab7b
 {
     public partial class Form1 : Form
     {
-       private PhoneDictServiceSoapClient Service { get; set; }//ДЛЯ asmx
-        // private IService1 Service { get; set; } //для WCF
+       // private PhoneDictServiceSoapClient Service { get; set; }//ДЛЯ asmx
+       private IService1 Service { get; set; } //для WCF
         public Form1()
         {
             InitializeComponent();
-            Service = new PhoneDictServiceSoapClient();  //ДЛЯ asmx
-            // Service = new Service1Client();  //для WCF
+            //Service = new PhoneDictServiceSoapClient();  //ДЛЯ asmx
+            Service = new Service1Client();  //для WCF
             LoadPhoneList();
         }
 
