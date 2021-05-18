@@ -5,6 +5,8 @@
 #include "OS11_HTAPI.h"
 #include <algorithm>
 #include "SEQLOG.h"
+#include <LM.h>
+#pragma comment (lib,"netapi32.lib")
 extern HMODULE hmodule;
 namespace HT {
 	HANDLE Addr;
@@ -25,6 +27,11 @@ namespace HT {
 	BOOL EqualElementKeys(Element* el1, Element* el2);
 	void SetErrorMessage(HTHANDLE* ht, const char* message, int messageLen);
 	void UpdateElement(HTHANDLE* ht, Element* el, void* newpayload, int newpayloadlength);
+	void UpdateElement(HTHANDLE* ht, Element* el, void* newpayload, int newpayloadlength);
+	BOOL isGroupExist(LPCWSTR groupName);
+	BOOL isInUserGroups(LPCWSTR userName, LPCWSTR groupName);
+	BOOL isCurrentGroup(LPCWSTR groupName);
+	BOOL isUserRight(LPCWSTR name, LPCWSTR pass);
 
 	Element::Element() {
 		this->key = nullptr;
@@ -73,8 +80,15 @@ namespace HT {
 		int   SecSnapshotInterval,		   // переодичность сохранения в сек.
 		int   MaxKeyLength,                // максимальный размер ключа
 		int   MaxPayloadLength,            // максимальный размер данных
-		const wchar_t  FileName[512]          // имя файла 
+		const wchar_t  FileName[512],          // имя файла 
+		const wchar_t  HTUsersGroup[512]          // имя файла 
 	) {
+
+		if (!isGroupExist(HTUsersGroup) || !isCurrentGroup(HTUsersGroup) || !isCurrentGroup(L"Администраторы")) {
+			std::cout << "Groups error";
+			return NULL;
+		}
+
 		HANDLE hf = CreateFile(
 			FileName,//path
 			GENERIC_WRITE | GENERIC_READ,
@@ -111,6 +125,7 @@ namespace HT {
 			MaxKeyLength,
 			MaxPayloadLength,
 			FileName);
+		memcpy(ht->HTUsersGroup, HTUsersGroup, sizeof(ht->HTUsersGroup));
 		std::cout << "Create ht: " << std::endl;
 		ht->File = hf;
 		ht->FileMapping = hm;
@@ -171,6 +186,68 @@ namespace HT {
 
 		DWORD SnapShotThread = NULL;
 		if (!(ht->SnapshotThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)SnapShotCycle, ht, 0, &SnapShotThread))) return NULL;
+
+		if (!isCurrentGroup((LPCWSTR)((HTHANDLE*)lp)->HTUsersGroup)) {
+			std::cout << "User doenst belong to the group";
+			Close((HTHANDLE*)lp);
+			return NULL;
+		}
+		return ht;
+	}
+
+
+	HTHANDLE* Open(const wchar_t FileName[512], const wchar_t userName[512], const wchar_t password[512]) {
+		if (!isUserRight(userName, password))
+			return NULL;
+		HANDLE hf = CreateFile(
+			FileName,//path
+			GENERIC_WRITE | GENERIC_READ,
+			FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,//режим совместного пользования
+			NULL,// атрибуты защиты
+			OPEN_EXISTING,//  открытие
+			FILE_ATTRIBUTE_NORMAL,//атрибуты и флаги
+			NULL//файл атрибутов
+		);
+		if (hf == INVALID_HANDLE_VALUE)
+		{
+			std::cout << _Post_equals_last_error_::GetLastError();
+			return NULL;
+		}
+		HANDLE hm = CreateFileMapping(//создать объект ядра 
+			hf,
+			NULL,
+			PAGE_READWRITE,
+			0, 0, L"name");
+		if (!hm)return NULL;
+		std::cout << "Open FileMapping: " << hm << std::endl;
+		LPVOID lp = MapViewOfFile(
+			hm,
+			FILE_MAP_ALL_ACCESS | FILE_MAP_READ | FILE_MAP_WRITE,
+			0, 0, 0);
+		Addr = lp;
+		if (!lp) {
+			return NULL;
+		}
+		std::cout << "Open MapViewOfFile: " << lp << std::endl;
+
+		HTHANDLE* ht = (HTHANDLE*)lp;
+		ht->File = hf;
+		ht->FileMapping = hm;
+		ht->Addr = lp;
+		ht->Mutex = CreateMutex(
+			NULL,
+			FALSE,
+			L"mutex");
+
+		DWORD SnapShotThread = NULL;
+		if (!(ht->SnapshotThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)SnapShotCycle, ht, 0, &SnapShotThread))) return NULL;
+
+		if (!isInUserGroups(userName, (LPCWSTR)((HTHANDLE*)lp)->HTUsersGroup)) {
+			std::cout << "User doenst belong to the group";
+			Close((HTHANDLE*)lp);
+			return NULL;
+		}
+
 		return ht;
 	}
 
@@ -518,4 +595,78 @@ namespace HT {
 		}
 		return TRUE;
 	}
+
+	BOOL  isGroupExist(LPCWSTR groupName) {
+		GROUP_INFO_0* groupsInfo;
+		DWORD readed = 0, total = 0;
+		NetLocalGroupEnum(
+			NULL,
+			0,
+			(LPBYTE*)&groupsInfo,
+			MAX_PREFERRED_LENGTH,
+			&readed,
+			&total,
+			NULL
+		);
+		bool exosts = false;
+		for (int i = 0; i < readed; i++) {
+			int res = lstrcmpW(groupName, groupsInfo[i].grpi0_name);
+			if (res == 0) {
+				exosts = true;
+				break;
+			}
+		}
+		NetApiBufferFree((LPVOID)groupsInfo);
+		return exosts;
+	}
+
+	BOOL isInUserGroups(LPCWSTR userName, LPCWSTR groupName) {
+		GROUP_USERS_INFO_0* groupUsersInfo;
+		DWORD uc = 0, tc = 0;
+		NET_API_STATUS ns = NetUserGetLocalGroups(
+			NULL,
+			userName,
+			0,
+			LG_INCLUDE_INDIRECT,
+			(LPBYTE*)&groupUsersInfo,
+			MAX_PREFERRED_LENGTH,
+			&uc,
+			&tc
+		);
+		bool exosts = false;
+		if (ns == NERR_Success) {
+			for (int i = 0; i < uc; i++) {
+				int res = lstrcmpW(groupName, groupUsersInfo[i].grui0_name);
+				if (res == 0) {
+					exosts = true;
+					break;
+				}
+			}
+			NetApiBufferFree((LPVOID)groupUsersInfo);
+		}
+		return exosts;
+	}
+
+	BOOL isCurrentGroup(LPCWSTR groupName) {
+		WCHAR currentUserName[512];
+		DWORD lenUserName = 512;
+		GetUserName(currentUserName, &lenUserName);
+		return isInUserGroups(currentUserName, groupName);
+	}
+
+	BOOL  isUserRight(LPCWSTR name, LPCWSTR pass) {
+		bool res;
+		HANDLE hToken = 0;
+		res = LogonUserW(
+			name,
+			L".",
+			pass,
+			LOGON32_LOGON_INTERACTIVE,
+			LOGON32_PROVIDER_DEFAULT,
+			&hToken
+		);
+		CloseHandle(hToken);
+		return res;
+	}
+
 }

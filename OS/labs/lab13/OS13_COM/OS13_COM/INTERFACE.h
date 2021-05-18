@@ -27,12 +27,21 @@ interface IOS13 :IUnknown {
 		int   MaxKeyLength,                // максимальный размер ключа
 		int   MaxPayloadLength,            // максимальный размер данных
 		const wchar_t  FileName[512],          // имя файла 
+		const wchar_t  HTUsersGroup[512],          // имя файла 
 		HT::HTHANDLE** result
 	)) PURE; 	// != NULL успешное завершение  
 
 	STDMETHOD(Open     //  открыть HT             
 	(
 		const wchar_t    FileName[512],         // имя файла 
+		HT::HTHANDLE** result
+	)) PURE; 	// != NULL успешное завершение 
+
+	STDMETHOD(Open     //  открыть HT             
+	(
+		const wchar_t    FileName[512],         // имя файла 
+		const wchar_t    userName[512],         // имя файла 
+		const wchar_t    password[512],         // имя файла 
 		HT::HTHANDLE** result
 	)) PURE; 	// != NULL успешное завершение  
 

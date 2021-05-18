@@ -65,11 +65,11 @@ STDMETHODIMP OS13::Create(
 	int   SecSnapshotInterval,		   // переодичность сохранения в сек.
 	int   MaxKeyLength,                // максимальный размер ключа
 	int   MaxPayloadLength,            // максимальный размер данных
-	const wchar_t  FileName[512],          // имя файла 
+	const wchar_t  FileName[512],      // имя файла 
+	const wchar_t  HTUsersGroup[512],      // имя файла 
 	HT::HTHANDLE** result
 ){
-	*result = HT::Create(Capacity, SecSnapshotInterval, MaxKeyLength, MaxPayloadLength, FileName);
-	std::cout << result;
+	*result = HT::Create(Capacity, SecSnapshotInterval, MaxKeyLength, MaxPayloadLength, FileName, HTUsersGroup);
 	if (*result == NULL) {
 		return E_FAIL;
 	}
@@ -81,6 +81,22 @@ STDMETHODIMP OS13::Open(
 	HT::HTHANDLE** result
 ) {
 	HT::HTHANDLE* temp = HT::Open(FileName);
+	if (temp == NULL)
+		return E_FAIL;
+	*result = temp;
+	if (*result != NULL)
+		return S_OK;
+	else
+		return E_FAIL;
+}
+
+STDMETHODIMP OS13::Open(
+	const wchar_t    FileName[512],         // имя файла 
+	const wchar_t    userName[512],         // имя файла 
+	const wchar_t    password[512],         // имя файла 
+	HT::HTHANDLE** result
+) {
+	HT::HTHANDLE* temp = HT::Open(FileName, userName, password);
 	if (temp == NULL)
 		return E_FAIL;
 	*result = temp;

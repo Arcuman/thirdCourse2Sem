@@ -49,11 +49,12 @@ namespace HTAPI    // HT API
 		int   SecSnapshotInterval,		   // переодичность сохранения в сек.
 		int   MaxKeyLength,                // максимальный размер ключа
 		int   MaxPayloadLength,            // максимальный размер данных
-		const wchar_t  FileName[512]          // имя файла 
+		const wchar_t  FileName[512],          // имя файла 
+		const wchar_t  HTUsersGroup[512]          // имя файла 
 	) {
 		HT::HTHANDLE* pht;
 		if (SUCCEEDED(pIOS13->Create(
-			Capacity, SecSnapshotInterval, MaxKeyLength, MaxPayloadLength, FileName, &pht))) {
+			Capacity, SecSnapshotInterval, MaxKeyLength, MaxPayloadLength, FileName, HTUsersGroup, &pht))) {
 			
 			return pht;
 		}
@@ -68,6 +69,21 @@ namespace HTAPI    // HT API
 	) {
 		HT::HTHANDLE* pht;
 		if (SUCCEEDED(pIOS13->Open(FileName, &pht))) {
+			return pht;
+		}
+		else {
+			return NULL;
+		}
+	}
+
+	HT::HTHANDLE* HTAPI::Open     //  открыть HT             
+	(
+		const wchar_t   FileName[512],         // имя файла 
+		const wchar_t   userName[512],         // имя файла 
+		const wchar_t   password[512]         // имя файла 
+	) {
+		HT::HTHANDLE* pht;
+		if (SUCCEEDED(pIOS13->Open(FileName, userName, password, &pht))) {
 			return pht;
 		}
 		else {

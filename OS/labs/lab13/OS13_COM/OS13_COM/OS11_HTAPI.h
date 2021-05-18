@@ -49,6 +49,7 @@ extern "C" OS11_HTAPI_API struct HTHANDLE    // блок управления HT
 
 		HANDLE Mutex;
 		int N;//текущее заполнение
+		char HTUsersGroup[512];
 		HANDLE SnapshotThread;
 	};
 
@@ -70,56 +71,63 @@ extern "C" OS11_HTAPI_API HTHANDLE * Create   //  создать HT
 		int   SecSnapshotInterval,		   // переодичность сохранения в сек.
 		int   MaxKeyLength,                // максимальный размер ключа
 		int   MaxPayloadLength,            // максимальный размер данных
-		const wchar_t  FileName[512]          // имя файла 
+		const wchar_t  FileName[512],          // имя файла 
+		const wchar_t    HTUsersGroup[512]
 	); 	// != NULL успешное завершение  
 
-extern "C" OS11_HTAPI_API HTHANDLE * Open     //  открыть HT             
+OS11_HTAPI_API HTHANDLE * Open     //  открыть HT             
 	(
 		const wchar_t    FileName[512]         // имя файла 
-	); 	// != NULL успешное завершение  
+	); 	// != NULL успешное завершение 
 
-extern "C" OS11_HTAPI_API HTHANDLE * OpenExist     //  открыть HT             
+ OS11_HTAPI_API HTHANDLE * Open     //  открыть HT             
+(
+	const wchar_t    FileName[512],         // имя файла S
+	const wchar_t    userName[512],         // имя файла 
+	const wchar_t    password[512]         // имя файла 
+); 	// != NULL успешное завершение  
+
+OS11_HTAPI_API HTHANDLE * OpenExist     //  открыть HT             
 (
 	const wchar_t    FileName[512]         // имя файла 
 ); 	// != NULL успешное завершение  
 
-extern "C" OS11_HTAPI_API BOOL Snap         // выполнить Snapshot
+OS11_HTAPI_API BOOL Snap         // выполнить Snapshot
 	(
 		HTHANDLE * hthandle           // управление HT (File, FileMapping)
 	);
 
-
-extern "C" OS11_HTAPI_API BOOL Close        // Snap и закрыть HT  и  очистить HTHANDLE
+OS11_HTAPI_API BOOL Close        // Snap и закрыть HT  и  очистить HTHANDLE
 	(
 		const HTHANDLE * hthandle           // управление HT (File, FileMapping)
 	);	//  == TRUE успешное завершение   
-extern "C" OS11_HTAPI_API BOOL CloseExist        // Snap и закрыть HT  и  очистить HTHANDLE
+OS11_HTAPI_API BOOL CloseExist        // Snap и закрыть HT  и  очистить HTHANDLE
 (
 	const HTHANDLE * hthandle           // управление HT (File, FileMapping)
 );	//  == TRUE успешное завершение   
 
 
-extern "C" OS11_HTAPI_API BOOL Insert      // добавить элемент в хранилище
+OS11_HTAPI_API BOOL Insert      // добавить элемент в хранилище
 	(
 		HTHANDLE * hthandle,            // управление HT
 		Element * element              // элемент
 	);	//  == TRUE успешное завершение 
 
 
-extern "C" OS11_HTAPI_API BOOL Delete      // удалить элемент в хранилище
+OS11_HTAPI_API BOOL Delete      // удалить элемент в хранилище
 	(
 		HTHANDLE * hthandle,            // управление HT (ключ)
 		Element * element              // элемент 
 	);	//  == TRUE успешное завершение 
 
-extern "C" OS11_HTAPI_API Element * Get     //  читать элемент в хранилище
+OS11_HTAPI_API Element * Get     //  читать элемент в хранилище
 	(
 		HTHANDLE * hthandle,            // управление HT
 		Element * element              // элемент 
 	); 	//  != NULL успешное завершение 
 
 
-extern "C" OS11_HTAPI_API BOOL Update     //  именить элемент в хранилище
+OS11_HTAPI_API BOOL Update     //  именить элемент в хранилище
 	(
 		HTHANDLE * hthandle,            // управление HT
 		Element * oldelement,          // старый элемент (ключ, размер ключа)

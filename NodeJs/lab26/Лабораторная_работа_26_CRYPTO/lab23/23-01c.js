@@ -10,9 +10,11 @@ let clientFunc = async () => {
         json: true
     }).then((response) => {
         const serverContext = response;
+        console.log(serverContext);
         const clientDH = new ClientDH(serverContext);
         const clientContext = clientDH.getContext();
         console.log(clientContext);
+
         request({
             method: 'POST',
             uri: 'http://localhost:3000/ClientContext',
@@ -32,13 +34,12 @@ let clientFunc = async () => {
             }).catch((err) => {
                 console.log(err);
             }).then((body) => {
-                    fs.writeFileSync('./client/fileClientEncrypt.txt', body);
-
-                    const  clientSecret = clientDH.getSecret(serverContext);
-                    let key = clientSecret.toString('hex');
-                    decipherFile(key, body)
-                })
-            }).catch((err) => {
+                fs.writeFileSync('./client/fileClientEncrypt.txt', body);
+                const clientSecret = clientDH.getSecret(serverContext);
+                let key = clientSecret.toString('hex');
+                decipherFile(key, body)
+            })
+        }).catch((err) => {
             console.log(err);
         })
     })

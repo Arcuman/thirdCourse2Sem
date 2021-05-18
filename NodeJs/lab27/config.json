@@ -1,0 +1,15 @@
+{
+  "server": {
+    "host": "localhost",
+    "port": 8000
+  },
+  "webDav": {
+    "yandexDisk": {
+      "remoteUrl": "https://webdav.yandex.ru:443",
+      "opts": {
+        "username": "wef118",
+        "password": "123qwe!@#QWE"
+      }
+    }
+  }
+}

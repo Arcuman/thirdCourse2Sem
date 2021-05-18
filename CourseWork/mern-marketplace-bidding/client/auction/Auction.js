@@ -86,9 +86,11 @@ export default function Auction ({match}) {
       abortController.abort()
     }
   }, [match.params.auctionId])
+
   const updateBids = (updatedAuction) => {
     setAuction(updatedAuction)
   }
+
   const update = () => {
     setJustEnded(true)
   }
