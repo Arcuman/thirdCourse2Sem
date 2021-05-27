@@ -1,0 +1,151 @@
+{
+	"info": {
+		"_postman_id": "31ea7f86-f357-474f-9296-bc10977d311d",
+		"name": "lab24",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://localhost:3000/rd/dir",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/rd/dir",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"rd",
+						"dir"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3000/md/dir",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/md/dir",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"md",
+						"dir"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3000/up/Bears.jpg",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/up/Bears.jpg",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"up",
+						"Bears.jpg"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3000/down/Bears.jpg",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/down/Bears.jpg",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"down",
+						"Bears.jpg"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3000/copy/Bears.jpg2/Москва.jpg",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/copy/Bears.jpg2/Море.jpg",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"copy",
+						"Bears.jpg2",
+						"Море.jpg"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3000/del/Море.jpg",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/del/Море.jpg",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"del",
+						"Море.jpg"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3000/move/Горы.jpg/Мишки.jpg",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/move/Горы.jpg/Мишки.jpg",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"move",
+						"Горы.jpg",
+						"Мишки.jpg"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -35,7 +35,7 @@ class ClientVerifyRSA {
     async verify(signContext, rs) {
         v.write(rs);
         v.end();
-        // signContext.signature = "MEYCIQCPfWhpzxMqu3gZWflBm5V0aetgb2/S+SGyGcElaOjgdgIhALaD4lbxVwa8HUUBFOLz+CGvIioDkf9oihSnXHCqh8yV";
+        signContext.signature = "MEYCIQCPfWhpzxMqu3gZWflBm5V0aetgb2/S+SGyGcElaOjgdgIhALaD4lbxVwa8HUUBFOLz+CGvIioDkf9oihSnXHCqh8yV";
         return await v.verify(signContext.publicKey, signContext.signature, 'hex')
     };
 }

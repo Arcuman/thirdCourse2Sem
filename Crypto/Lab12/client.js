@@ -17,6 +17,7 @@ app.listen(PORT, async () => {
         .then((response) => {
             let signature = response.sign;
             let txt = response.file;
+            console.log(signature)
             let cv = new ClientVerifyRSA();
             cv.verify(signature, txt).then((isVerify) => {
                     if (isVerify) {

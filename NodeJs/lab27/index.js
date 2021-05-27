@@ -1,6 +1,6 @@
 const app = require("express")();
 const fs = require("fs");
-const { createClient } = require("webdav");
+const {createClient} = require("webdav");
 const webDavClient = createClient("https://webdav.yandex.ru", {
     username: "wef101",
     password: "qmqhllcgiiucrdwv",
@@ -13,15 +13,15 @@ app.post("/md/:folder", (req, res) => {
         .then((exist) => {
             if (exist) {
                 res.status(408);
-                return { error: "Directory exists" };
+                return {error: "Directory exists"};
             } else {
                 return webDavClient
                     .createDirectory(dict)
-                    .then(() => ({ message: `Directory '${dict}' created` }));
+                    .then(() => ({message: `Directory '${dict}' created`}));
             }
         })
         .then((message) => res.json(message))
-        .catch((err) => res.status(400).json({ error: err.message }));
+        .catch((err) => res.status(400).json({error: err.message}));
 });
 
 app.post("/rd/:folder", (req, res) => {
@@ -33,14 +33,14 @@ app.post("/rd/:folder", (req, res) => {
             if (exist) {
                 return webDavClient
                     .deleteFile(dict)
-                    .then(() => ({ message: `Directory '${dict}' removed` }));
+                    .then(() => ({message: `Directory '${dict}' removed`}));
             } else {
                 res.status(404);
-                return { error: "Directory is not exists" };
+                return {error: "Directory is not exists"};
             }
         })
         .then((message) => res.json(message))
-        .catch((err) => res.status(400).json({ custom: true, error: err.message }));
+        .catch((err) => res.status(400).json({custom: true, error: err.message}));
 });
 
 app.post("/up/:file", (req, res) => {
@@ -51,9 +51,9 @@ app.post("/up/:file", (req, res) => {
         let ws = webDavClient.createWriteStream(req.params.file);
         rs.pipe(ws);
 
-        res.json({ message: "File's been uploaded" });
+        res.json({message: "File's been uploaded"});
     } catch (err) {
-        res.status(408).json({ error: err.toString() });
+        res.status(408).json({error: err.toString()});
     }
 });
 
@@ -67,11 +67,11 @@ app.post("/down/:file", (req, res) => {
                 webDavClient.createReadStream(path).pipe(res);
             } else {
                 res.status(404);
-                return { error: "File is not exists" };
+                return {error: "File is not exists"};
             }
         })
         .then((message) => (message ? res.json(message) : null))
-        .catch((err) => res.status(400).json({ error: err.message }));
+        .catch((err) => res.status(400).json({error: err.message}));
 });
 
 app.post("/del/:file", (req, res) => {
@@ -83,14 +83,14 @@ app.post("/del/:file", (req, res) => {
             if (exist) {
                 return webDavClient
                     .deleteFile(path)
-                    .then(() => ({ message: `File '${path}' removed` }));
+                    .then(() => ({message: `File '${path}' removed`}));
             } else {
                 res.status(404);
-                return { error: "File is not exists" };
+                return {error: "File is not exists"};
             }
         })
         .then((message) => res.json(message))
-        .catch((err) => res.status(400).json({ error: err.message }));
+        .catch((err) => res.status(400).json({error: err.message}));
 });
 
 app.post("/copy/:file1/:file2", (req, res) => {
@@ -104,18 +104,18 @@ app.post("/copy/:file1/:file2", (req, res) => {
                 try {
                     return webDavClient
                         .copyFile(path, path2)
-                        .then(() => ({ message: `File '${path}' copied to ${path2}` }));
+                        .then(() => ({message: `File '${path}' copied to ${path2}`}));
                 } catch (err) {
                     res.status(404);
-                    return { error: "File cannot be copied" };
+                    return {error: "File cannot be copied"};
                 }
             } else {
                 res.status(408);
-                return { error: "File is not exists" };
+                return {error: "File is not exists"};
             }
         })
         .then((message) => res.json(message))
-        .catch((err) => res.status(400).json({ error: err.message }));
+        .catch((err) => res.status(400).json({error: err.message}));
 });
 app.post("/move/:file1/:file2", (req, res) => {
     let path = `/${req.params.file1}`;
@@ -128,18 +128,18 @@ app.post("/move/:file1/:file2", (req, res) => {
                 try {
                     return webDavClient
                         .moveFile(path, path2)
-                        .then(() => ({ message: `File '${path}' moved to ${path2}` }));
+                        .then(() => ({message: `File '${path}' moved to ${path2}`}));
                 } catch (err) {
                     res.status(404);
-                    return { error: "File cannot be moved" };
+                    return {error: "File cannot be moved"};
                 }
             } else {
                 res.status(408);
-                return { error: "File is not exists" };
+                return {error: "File is not exists"};
             }
         })
         .then((message) => res.json(message))
-        .catch((err) => res.status(400).json({ error: err.message }));
+        .catch((err) => res.status(400).json({error: err.message}));
 });
 app.use(function (request, response) {
     response.sendStatus(404);
