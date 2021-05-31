@@ -17,3 +17,7 @@
 17:OS12::Release rc = 1
 19:OS12::AddRef m_lRef = 2
 18:OS12::QueryInterface rc = 0
+20:OS12::Release rc = 1
+22:OS12::~Adder g_Components = 0
+21:OS12::Release rc = 0
+23:DllCanUnloadNow: rc = 0

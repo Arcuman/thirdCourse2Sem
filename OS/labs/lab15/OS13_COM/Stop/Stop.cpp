@@ -55,6 +55,9 @@ int main(int argc, char* argv[])
         }
         HTAPI::Snap(HT);
         killProcessByName(L"OS_START.exe");
+        killProcessByName(L"OS_INSERT.exe");
+        killProcessByName(L"Delete.exe");
+        killProcessByName(L"Update.exe");
         if (HTAPI::CloseConnection() == false)
             printf("error with close api\n");
     }

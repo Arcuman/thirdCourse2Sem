@@ -195,7 +195,7 @@ namespace HT {
 
 		DWORD SnapShotThread = NULL;
 		if (!(ht->SnapshotThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)SnapShotCycle, ht, 0, &SnapShotThread))) return NULL;
-
+	
 		if (!isCurrentGroup((LPCWSTR)((HTHANDLE*)lp)->HTUsersGroup)) {
 			std::cout << "User doenst belong to the group";
 			Close((HTHANDLE*)lp);
