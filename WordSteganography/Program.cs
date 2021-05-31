@@ -34,7 +34,8 @@ namespace WordSteganography
                     }
                     else
                     {
-                        ColorEncryption();
+                        //ColorEncryption();
+                        LetterSpaceEncryption();
                     }
                 }
                 else
@@ -84,9 +85,6 @@ namespace WordSteganography
                     arr += '0';
                 }
             }
-
-           
-
             Console.WriteLine("Message: " + BinaryToString(arr));
         }
 
@@ -117,9 +115,6 @@ namespace WordSteganography
                     arr += '0';
                 }
             }
-
-
-
             Console.WriteLine("Message: " + BinaryToString(arr));
         }
 
@@ -188,6 +183,40 @@ namespace WordSteganography
                     System.Drawing.Color new_color = Color.FromArgb(0, 1, 1);
                    
                     document.Sections[0].Body.Paragraphs[i + 1].Runs[0].Font.Color = new_color;
+                }
+            }
+
+            document.Save("color_encrypted_file.docx");
+        }
+
+        public static void LetterSpaceEncryption()
+        {
+            //Initialization 
+            Document document = new Document("sample file.docx");
+            DocumentBuilder builder = new DocumentBuilder(document);
+
+            double lines_count = document.Sections[0].Body.Paragraphs.Count;
+            Console.WriteLine("You can encrypt only " + Math.Round(lines_count / 8) + " Bytes of data");
+            Console.WriteLine("Enter your message:");
+            String data = Console.ReadLine();
+            String bin = StringToBinary(data);
+
+            if (bin.Length > Math.Round(lines_count))
+            {
+                Console.WriteLine("Message length is more than possible");
+                return;
+            }
+
+
+            for (int i = 0; i < bin.Length; i++)
+            {
+                Console.WriteLine(document.Sections[0].Body.Paragraphs[i].Runs[0].Text);
+                String additional = bin[i] == '0' ? "" : " ";
+                document.Sections[0].Body.Paragraphs[i].Runs[0].Text += additional;
+
+                if (i + 1 == bin.Length)
+                {
+                    document.Sections[0].Body.Paragraphs[i + 1].Runs[0].Text += "  ";
                 }
             }
 
